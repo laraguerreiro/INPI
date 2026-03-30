@@ -163,6 +163,8 @@
       justify-content:space-between;
       gap:12px;
       padding:18px 18px;
+      cursor:pointer;
+      user-select:none;
     }
 
     .dim-header-left{
@@ -231,20 +233,32 @@
     }
 
     .chevron{
-      font-size:18px;
-      color:#48616b;
+      display:block;
+      width:18px;
+      height:18px;
       transition:transform .2s ease;
+    }
+
+    .chevron svg{
+      display:block;
+      width:100%;
+      height:100%;
     }
 
     .dim-body{
       padding:0 18px 18px;
-      display:none;
+      max-height:0;
+      overflow:hidden;
       border-top:1px solid rgba(32,48,58,0.07);
       background:rgba(255,255,255,0.74);
+      transition:max-height .3s ease, padding .3s ease;
+      padding-top:0;
+      padding-bottom:0;
     }
 
     .dim-body.open{
-      display:block;
+      max-height:2000px;
+      padding:0 18px 18px;
     }
 
     .question{
@@ -290,6 +304,12 @@
     .star:hover{
       transform:translateY(-1px);
       box-shadow:0 6px 14px rgba(31,45,61,0.08);
+    }
+
+    .star.active{
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 8px 18px rgba(31,45,61,0.16);
     }
 
     .result-bar,
@@ -388,6 +408,7 @@
       font-weight:700;
       padding:8px 14px;
       border-radius:999px;
+      transition:background .25s, color .25s;
     }
 
     .actions{
@@ -431,6 +452,48 @@
       line-height:1.65;
     }
 
+    /* Recomendacoes inline panel */
+    .reco-panel{
+      margin-top:18px;
+      padding:20px;
+      border-radius:16px;
+      background:#f6fbf8;
+      border:1px solid rgba(45,127,105,0.15);
+      display:none;
+      animation:fadeIn .3s ease;
+    }
+
+    .reco-panel.open{
+      display:block;
+    }
+
+    .reco-panel h4{
+      font-size:16px;
+      color:#24434a;
+      margin-bottom:8px;
+    }
+
+    .reco-panel p{
+      font-size:15px;
+      color:#42535b;
+      line-height:1.55;
+    }
+
+    .reco-close{
+      margin-top:12px;
+      font-size:13px;
+      color:var(--muted);
+      background:none;
+      border:none;
+      cursor:pointer;
+      text-decoration:underline;
+    }
+
+    @keyframes fadeIn{
+      from{ opacity:0; transform:translateY(6px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
     .theme-a .dim-header{ background:linear-gradient(180deg,var(--green-soft),#f7fcf5); }
     .theme-a .dim-icon, .theme-a .score-pill{ color:var(--green); }
 
@@ -467,7 +530,7 @@
         padding:16px;
       }
 
-      .dim-body{
+      .dim-body.open{
         padding:0 16px 16px;
       }
 
@@ -492,65 +555,71 @@
   <div class="page">
     <section class="hero">
       <div class="hero-top">
-        <div class="badge">🧬 AIDA-PI</div>
-        <div class="nav">
-          <a href="index.html">Página AIDA-PI</a>
+        <div class="badge" role="banner">AIDA-PI</div>
+        <nav class="nav" aria-label="Navegacao principal">
+          <a href="index.html">Pagina AIDA-PI</a>
           <a href="trl.html">Ir para TRL</a>
-        </div>
+        </nav>
       </div>
 
       <h1>AIDA-PI — maturidade em propriedade intelectual</h1>
       <p>
-        Avaliação para PMEs, startups, instituições e projetos inovadores.
-        Responda cada questão de <strong>1</strong> a <strong>5</strong>,
+        Avaliacao para PMEs, startups, instituicoes e projetos inovadores.
+        Responda cada questao de <strong>1</strong> a <strong>5</strong>,
         sendo <strong>1 = inexistente</strong> e <strong>5 = consolidado</strong>.
       </p>
 
-      <div class="legend-box">
-        <div class="legend-pill"><strong>1</strong> = inexistente</div>
-        <div class="legend-pill"><strong>2</strong> = muito incipiente</div>
-        <div class="legend-pill"><strong>3</strong> = em desenvolvimento</div>
-        <div class="legend-pill"><strong>4</strong> = estruturado</div>
-        <div class="legend-pill"><strong>5</strong> = consolidado</div>
+      <div class="legend-box" role="list" aria-label="Legenda da escala">
+        <div class="legend-pill" role="listitem"><strong>1</strong> = inexistente</div>
+        <div class="legend-pill" role="listitem"><strong>2</strong> = muito incipiente</div>
+        <div class="legend-pill" role="listitem"><strong>3</strong> = em desenvolvimento</div>
+        <div class="legend-pill" role="listitem"><strong>4</strong> = estruturado</div>
+        <div class="legend-pill" role="listitem"><strong>5</strong> = consolidado</div>
       </div>
     </section>
 
     <div class="layout">
-      <div class="left" id="dims"></div>
+      <div class="left" id="dims" role="region" aria-label="Dimensoes de avaliacao"></div>
 
       <div class="right">
         <div class="result-bar">
-          <h2>Resultado por dimensão</h2>
-          <p>As barras abaixo mostram o desempenho médio em cada dimensão do AIDA-PI.</p>
+          <h2>Resultado por dimensao</h2>
+          <p>As barras abaixo mostram o desempenho medio em cada dimensao do AIDA-PI.</p>
 
-          <div id="bars"></div>
+          <div id="bars" role="region" aria-label="Barras de resultado"></div>
 
           <div class="overall">
             <div>
-              <div class="overall-score" id="overall-score">0,0</div>
+              <div class="overall-score" id="overall-score" aria-live="polite">0,0</div>
             </div>
 
             <div class="overall-meta">
-              <div class="overall-label">pontuação geral (máx. 5,0)</div>
-              <div class="level-badge" id="level-badge" style="background:#f4f7f8;color:#536770;">
+              <div class="overall-label">pontuacao geral (max. 5,0)</div>
+              <div class="level-badge" id="level-badge" style="background:#f4f7f8;color:#536770;" aria-live="polite">
                 Responda as perguntas acima
               </div>
             </div>
           </div>
 
           <div class="actions">
-            <button class="btn btn-primary" onclick="verRecomendacoes()">Ver recomendações</button>
-            <button class="btn" onclick="limparRespostas()">Limpar respostas</button>
+            <button class="btn btn-primary" id="btn-reco" aria-controls="reco-panel">Ver recomendacoes</button>
+            <button class="btn" id="btn-limpar">Limpar respostas</button>
+          </div>
+
+          <div class="reco-panel" id="reco-panel" role="region" aria-label="Recomendacoes">
+            <h4 id="reco-title"></h4>
+            <p id="reco-text"></p>
+            <button class="reco-close" id="reco-close" aria-label="Fechar recomendacoes">Fechar</button>
           </div>
         </div>
 
         <div class="mini-card">
           <h3>Como interpretar</h3>
           <ul>
-            <li><strong>Awareness:</strong> conhecimento sobre PI e percepção do valor estratégico da proteção.</li>
-            <li><strong>Identificação:</strong> existência de rotinas, responsáveis e gestão interna de PI.</li>
-            <li><strong>Depósito:</strong> proteção formal, apoio técnico e capacidade de decidir quando proteger.</li>
-            <li><strong>Aproveitamento:</strong> exploração comercial, valorização e uso estratégico dos ativos de PI.</li>
+            <li><strong>Awareness:</strong> conhecimento sobre PI e percepcao do valor estrategico da protecao.</li>
+            <li><strong>Identificacao:</strong> existencia de rotinas, responsaveis e gestao interna de PI.</li>
+            <li><strong>Deposito:</strong> protecao formal, apoio tecnico e capacidade de decidir quando proteger.</li>
+            <li><strong>Aproveitamento:</strong> exploracao comercial, valorizacao e uso estrategico dos ativos de PI.</li>
           </ul>
         </div>
       </div>
@@ -558,6 +627,8 @@
   </div>
 
   <script>
+    const STORAGE_KEY = 'aida-pi-scores';
+
     const dims = [
       {
         id:'a',
@@ -565,78 +636,118 @@
         sub:'Conhecimento em PI',
         color:'#3B6D11',
         bg:'#EAF3DE',
-        icon:'🔎',
+        icon:'search',
         theme:'theme-a',
         questions:[
-          'Os sócios e colaboradores-chave sabem o que é propriedade intelectual (patente, marca, segredo industrial)?',
-          'A empresa conhece a diferença entre publicar/divulgar e proteger uma inovação?',
+          'Os socios e colaboradores-chave sabem o que e propriedade intelectual (patente, marca, segredo industrial)?',
+          'A empresa conhece a diferenca entre publicar/divulgar e proteger uma inovacao?',
           'A equipe sabe identificar quando um produto, processo ou marca pode ser protegido?',
-          'A empresa conhece os tipos de proteção de PI aplicáveis ao seu setor (patente, modelo de utilidade, marca, software)?'
+          'A empresa conhece os tipos de protecao de PI aplicaveis ao seu setor (patente, modelo de utilidade, marca, software)?'
         ]
       },
       {
         id:'i',
-        label:'Identificação',
-        sub:'Gestão interna de PI',
+        label:'Identificacao',
+        sub:'Gestao interna de PI',
         color:'#534AB7',
         bg:'#EEEDFE',
-        icon:'🧭',
+        icon:'compass',
         theme:'theme-i',
         questions:[
-          'Existe alguma política ou rotina interna para identificar criações potencialmente protegíveis?',
-          'Há um responsável (interno ou externo) por questões de PI na empresa?',
-          'A empresa realiza monitoramento de concorrentes e anterioridade antes de lançar produtos?',
-          'Contratos com colaboradores e parceiros incluem cláusulas sobre titularidade de PI?'
+          'Existe alguma politica ou rotina interna para identificar criacoes potencialmente protegiveis?',
+          'Ha um responsavel (interno ou externo) por questoes de PI na empresa?',
+          'A empresa realiza monitoramento de concorrentes e anterioridade antes de lancar produtos?',
+          'Contratos com colaboradores e parceiros incluem clausulas sobre titularidade de PI?'
         ]
       },
       {
         id:'d',
-        label:'Depósito',
-        sub:'Proteção formal',
+        label:'Deposito',
+        sub:'Protecao formal',
         color:'#993C1D',
         bg:'#FAECE7',
-        icon:'🛡️',
+        icon:'shield',
         theme:'theme-d',
         questions:[
-          'A empresa já realizou depósito de pedido de patente, registro de marca ou outro título de PI?',
-          'Existe apoio jurídico ou de consultoria para a elaboração e depósito de pedidos de proteção?',
-          'A empresa tem orçamento destinado a custos de proteção de PI (taxas, honorários)?',
-          'Há processo para avaliar o custo-benefício de proteger formalmente uma inovação antes de depositar?'
+          'A empresa ja realizou deposito de pedido de patente, registro de marca ou outro titulo de PI?',
+          'Existe apoio juridico ou de consultoria para a elaboracao e deposito de pedidos de protecao?',
+          'A empresa tem orcamento destinado a custos de protecao de PI (taxas, honorarios)?',
+          'Ha processo para avaliar o custo-beneficio de proteger formalmente uma inovacao antes de depositar?'
         ]
       },
       {
         id:'a2',
         label:'Aproveitamento',
-        sub:'Exploração comercial',
+        sub:'Exploracao comercial',
         color:'#085041',
         bg:'#E1F5EE',
-        icon:'🚀',
+        icon:'rocket',
         theme:'theme-a2',
         questions:[
-          'A empresa já explorou comercialmente algum ativo de PI (licenciamento, cessão, parceria)?',
-          'Os ativos de PI da empresa são considerados no valuation ou em negociações com investidores?',
-          'Existe estratégia para transformar PI em fonte de receita (licenças, franquias, joint ventures)?',
-          'A empresa monitora possíveis infrações aos seus ativos de PI e sabe como agir?'
+          'A empresa ja explorou comercialmente algum ativo de PI (licenciamento, cessao, parceria)?',
+          'Os ativos de PI da empresa sao considerados no valuation ou em negociacoes com investidores?',
+          'Existe estrategia para transformar PI em fonte de receita (licencas, franquias, joint ventures)?',
+          'A empresa monitora possiveis infracoes aos seus ativos de PI e sabe como agir?'
         ]
       }
     ];
 
-    const scores = {};
-    dims.forEach(d => {
-      scores[d.id] = Array(d.questions.length).fill(0);
-    });
+    const svgIcons = {
+      search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+      compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+      shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+      rocket: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
+      chevronUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>'
+    };
 
+    // --- State ---
+    let scores = {};
+    let openDims = {};
+
+    function initState(){
+      dims.forEach(d => {
+        scores[d.id] = Array(d.questions.length).fill(0);
+        openDims[d.id] = false;
+      });
+      openDims[dims[0].id] = true;
+    }
+
+    // --- localStorage persistence ---
+    function saveToStorage(){
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+      } catch(e) { /* quota exceeded or private mode */ }
+    }
+
+    function loadFromStorage(){
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved){
+          const parsed = JSON.parse(saved);
+          dims.forEach(d => {
+            if(Array.isArray(parsed[d.id]) && parsed[d.id].length === d.questions.length){
+              scores[d.id] = parsed[d.id];
+            }
+          });
+        }
+      } catch(e) { /* corrupted data, ignore */ }
+    }
+
+    // --- Logic ---
     function toggleBody(dimId){
+      openDims[dimId] = !openDims[dimId];
       const body = document.getElementById(`body-${dimId}`);
       const chev = document.getElementById(`chev-${dimId}`);
-      const isOpen = body.classList.contains('open');
-      body.classList.toggle('open', !isOpen);
-      chev.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+      body.classList.toggle('open', openDims[dimId]);
+      chev.style.transform = openDims[dimId] ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 
     function setScore(dimId, qi, val){
       scores[dimId][qi] = scores[dimId][qi] === val ? 0 : val;
-      render();
+      saveToStorage();
+      updateScorePill(dimId);
+      updateStars(dimId, qi);
+      renderBars();
     }
 
     function getAvg(dimId){
@@ -648,71 +759,46 @@
     }
 
     function getLevel(total){
-      if(total === 0){
-        return {
-          text:'Responda as perguntas acima',
-          bg:'#f4f7f8',
-          color:'#536770'
-        };
-      }
-      if(total < 2){
-        return {
-          text:'Nível 1 — inicial',
-          bg:'#FCEBEB',
-          color:'#A32D2D'
-        };
-      }
-      if(total < 3){
-        return {
-          text:'Nível 2 — consciente',
-          bg:'#FAEEDA',
-          color:'#854F0B'
-        };
-      }
-      if(total < 4){
-        return {
-          text:'Nível 3 — estruturado',
-          bg:'#EEEDFE',
-          color:'#534AB7'
-        };
-      }
-      if(total < 4.5){
-        return {
-          text:'Nível 4 — avançado',
-          bg:'#EAF3DE',
-          color:'#3B6D11'
-        };
-      }
-      return {
-        text:'Nível 5 — estratégico',
-        bg:'#E1F5EE',
-        color:'#085041'
-      };
+      if(total === 0) return { text:'Responda as perguntas acima', bg:'#f4f7f8', color:'#536770' };
+      if(total < 2)   return { text:'Nivel 1 — inicial',       bg:'#FCEBEB', color:'#A32D2D' };
+      if(total < 3)   return { text:'Nivel 2 — consciente',    bg:'#FAEEDA', color:'#854F0B' };
+      if(total < 4)   return { text:'Nivel 3 — estruturado',   bg:'#EEEDFE', color:'#534AB7' };
+      if(total < 4.5) return { text:'Nivel 4 — avancado',      bg:'#EAF3DE', color:'#3B6D11' };
+      return             { text:'Nivel 5 — estrategico',   bg:'#E1F5EE', color:'#085041' };
+    }
+
+    // --- Targeted DOM updates (no full re-render) ---
+    function updateScorePill(dimId){
+      const avg = getAvg(dimId);
+      const pill = document.getElementById(`pill-${dimId}`);
+      if(pill) pill.textContent = `${avg.toFixed(1).replace('.',',')} / 5`;
+    }
+
+    function updateStars(dimId, qi){
+      const dim = dims.find(d => d.id === dimId);
+      const stars = document.querySelectorAll(`[data-dim="${dimId}"][data-qi="${qi}"]`);
+      stars.forEach(btn => {
+        const v = parseInt(btn.dataset.val, 10);
+        const active = scores[dimId][qi] === v;
+        btn.classList.toggle('active', active);
+        btn.style.background = active ? dim.color : '';
+      });
     }
 
     function renderBars(){
-      const colors = {
-        a:'#639922',
-        i:'#7F77DD',
-        d:'#D85A30',
-        a2:'#1D9E75'
-      };
+      const colors = { a:'#639922', i:'#7F77DD', d:'#D85A30', a2:'#1D9E75' };
 
-      const barsEl = document.getElementById('bars');
-      barsEl.innerHTML = dims.map(d => {
+      dims.forEach(d => {
         const avg = getAvg(d.id);
         const pct = Math.round(avg * 20);
-
-        return `
-          <div class="bar-row">
-            <span class="bar-label">${d.label}</span>
-            <div class="bar-track">
-              <div class="bar-fill" style="width:${pct}%;background:${colors[d.id]}"></div>
-            </div>
-            <span class="bar-val">${avg.toFixed(1).replace('.',',')}</span>
-          </div>
-        `;
-      }).join('');
+        const fill = document.getElementById(`fill-${d.id}`);
+        const val = document.getElementById(`val-${d.id}`);
+        if(fill){
+          fill.style.width = `${pct}%`;
+          fill.style.background = colors[d.id];
+        }
+        if(val) val.textContent = avg.toFixed(1).replace('.',',');
+      });
 
       const total = getTotal();
       document.getElementById('overall-score').textContent = total.toFixed(1).replace('.',',');
@@ -723,19 +809,22 @@
       badge.style.color = level.color;
     }
 
-    function render(){
+    // --- Initial full render (runs once) ---
+    function buildDims(){
       const container = document.getElementById('dims');
-      container.innerHTML = '';
 
-      dims.forEach((dim, di) => {
+      dims.forEach((dim) => {
         const avg = getAvg(dim.id);
+        const isOpen = openDims[dim.id];
 
         const el = document.createElement('div');
         el.className = `dim ${dim.theme}`;
         el.innerHTML = `
-          <div class="dim-header">
+          <div class="dim-header" onclick="toggleBody('${dim.id}')" role="button" tabindex="0"
+               aria-expanded="${isOpen}" aria-controls="body-${dim.id}"
+               aria-label="${dim.label}: ${dim.sub}">
             <div class="dim-header-left">
-              <div class="dim-icon">${dim.icon}</div>
+              <div class="dim-icon" aria-hidden="true">${svgIcons[dim.icon]}</div>
               <div>
                 <div class="dim-title">${dim.label}</div>
                 <div class="dim-sub">${dim.sub}</div>
@@ -743,70 +832,136 @@
             </div>
 
             <div class="dim-actions">
-              <div class="score-pill">${avg.toFixed(1).replace('.',',')} / 5</div>
-              <button
-                type="button"
-                class="toggle-btn"
-                onclick="toggleBody('${dim.id}')"
-                aria-label="Abrir ou fechar ${dim.label}"
-              >
-                <span class="chevron" id="chev-${dim.id}" style="${di===0 ? 'transform:rotate(180deg);' : ''}">⌃</span>
-              </button>
+              <div class="score-pill" id="pill-${dim.id}">${avg.toFixed(1).replace('.',',')} / 5</div>
+              <div class="toggle-btn" aria-hidden="true">
+                <span class="chevron" id="chev-${dim.id}" style="${isOpen ? 'transform:rotate(180deg);' : ''}">${svgIcons.chevronUp}</span>
+              </div>
             </div>
           </div>
 
-          <div class="dim-body ${di===0 ? 'open' : ''}" id="body-${dim.id}">
+          <div class="dim-body ${isOpen ? 'open' : ''}" id="body-${dim.id}" role="region" aria-label="Perguntas de ${dim.label}">
             ${dim.questions.map((q,qi)=>`
               <div class="question">
-                <p>${q}</p>
-                <div class="stars">
-                  ${[1,2,3,4,5].map(v=>`
+                <p id="q-${dim.id}-${qi}">${q}</p>
+                <div class="stars" role="radiogroup" aria-labelledby="q-${dim.id}-${qi}">
+                  ${[1,2,3,4,5].map(v=>{
+                    const active = scores[dim.id][qi] === v;
+                    return `
                     <button
                       type="button"
-                      class="star"
-                      style="${scores[dim.id][qi] === v ? `background:${dim.color};color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(31,45,61,0.16);` : ''}"
+                      class="star${active ? ' active' : ''}"
+                      style="${active ? `background:${dim.color};` : ''}"
+                      data-dim="${dim.id}"
+                      data-qi="${qi}"
+                      data-val="${v}"
                       onclick="event.stopPropagation(); setScore('${dim.id}',${qi},${v})"
-                    >${v}</button>
-                  `).join('')}
+                      role="radio"
+                      aria-checked="${active}"
+                      aria-label="Nota ${v} de 5"
+                    >${v}</button>`;
+                  }).join('')}
                 </div>
               </div>
             `).join('')}
           </div>
         `;
+
+        // Keyboard support for dim-header
+        const header = el.querySelector('.dim-header');
+        header.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            toggleBody(dim.id);
+          }
+        });
+
         container.appendChild(el);
       });
+    }
 
-      renderBars();
+    function buildBars(){
+      const colors = { a:'#639922', i:'#7F77DD', d:'#D85A30', a2:'#1D9E75' };
+      const barsEl = document.getElementById('bars');
+
+      barsEl.innerHTML = dims.map(d => {
+        const avg = getAvg(d.id);
+        const pct = Math.round(avg * 20);
+        return `
+          <div class="bar-row">
+            <span class="bar-label">${d.label}</span>
+            <div class="bar-track" role="progressbar" aria-valuenow="${avg.toFixed(1)}" aria-valuemin="0" aria-valuemax="5" aria-label="${d.label}">
+              <div class="bar-fill" id="fill-${d.id}" style="width:${pct}%;background:${colors[d.id]}"></div>
+            </div>
+            <span class="bar-val" id="val-${d.id}">${avg.toFixed(1).replace('.',',')}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- Recomendacoes inline ---
+    function verRecomendacoes(){
+      const total = getTotal();
+      const panel = document.getElementById('reco-panel');
+      const title = document.getElementById('reco-title');
+      const text = document.getElementById('reco-text');
+      const level = getLevel(total);
+      let msg = '';
+
+      if(total === 0){
+        msg = 'Responda ao menos algumas perguntas para receber recomendacoes personalizadas.';
+      } else if(total < 2){
+        msg = 'Priorize acoes de conscientizacao em propriedade intelectual, definicao de responsaveis internos e criacao de uma rotina minima para identificar ativos protegiveis.';
+      } else if(total < 3){
+        msg = 'O proximo passo e estruturar processos: estabelecer politica interna, revisar contratos, monitorar anterioridade e criar criterios para decidir quando proteger formalmente.';
+      } else if(total < 4){
+        msg = 'Sua organizacao ja apresenta base razoavel. Agora vale fortalecer o deposito estrategico, integrar PI a inovacao e avancar na exploracao economica dos ativos.';
+      } else if(total < 4.5){
+        msg = 'A maturidade ja e elevada. O foco deve ser consolidar mecanismos de valorizacao, licenciamento, monitoramento de infracoes e uso estrategico da PI.';
+      } else {
+        msg = 'Sua organizacao demonstra alta maturidade em PI. O desafio passa a ser escalar o modelo, ampliar exploracao comercial e transformar PI em diferencial competitivo sustentavel.';
+      }
+
+      title.textContent = level.text;
+      text.textContent = msg;
+      panel.classList.add('open');
+      panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
 
     function limparRespostas(){
       dims.forEach(d => {
         scores[d.id] = Array(d.questions.length).fill(0);
       });
-      render();
+      saveToStorage();
+
+      // Update all star buttons
+      document.querySelectorAll('.star').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = '';
+      });
+
+      // Update all score pills
+      dims.forEach(d => updateScorePill(d.id));
+
+      renderBars();
+
+      // Close reco panel
+      document.getElementById('reco-panel').classList.remove('open');
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function verRecomendacoes(){
-      const total = getTotal();
-      let msg = '';
+    // --- Init ---
+    initState();
+    loadFromStorage();
+    buildDims();
+    buildBars();
+    renderBars();
 
-      if(total < 2){
-        msg = 'Priorize ações de conscientização em propriedade intelectual, definição de responsáveis internos e criação de uma rotina mínima para identificar ativos protegíveis.';
-      } else if(total < 3){
-        msg = 'O próximo passo é estruturar processos: estabelecer política interna, revisar contratos, monitorar anterioridade e criar critérios para decidir quando proteger formalmente.';
-      } else if(total < 4){
-        msg = 'Sua organização já apresenta base razoável. Agora vale fortalecer o depósito estratégico, integrar PI à inovação e avançar na exploração econômica dos ativos.';
-      } else if(total < 4.5){
-        msg = 'A maturidade já é elevada. O foco deve ser consolidar mecanismos de valorização, licenciamento, monitoramento de infrações e uso estratégico da PI.';
-      } else {
-        msg = 'Sua organização demonstra alta maturidade em PI. O desafio passa a ser escalar o modelo, ampliar exploração comercial e transformar PI em diferencial competitivo sustentável.';
-      }
-
-      alert(msg);
-    }
-
-    render();
+    document.getElementById('btn-reco').addEventListener('click', verRecomendacoes);
+    document.getElementById('btn-limpar').addEventListener('click', limparRespostas);
+    document.getElementById('reco-close').addEventListener('click', () => {
+      document.getElementById('reco-panel').classList.remove('open');
+    });
   </script>
 </body>
 </html>
