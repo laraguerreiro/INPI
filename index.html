@@ -564,8 +564,8 @@
 
       <h1>AIDA-PI — maturidade em propriedade intelectual</h1>
       <p>
-        Avaliacao para PMEs, startups, instituicoes e projetos inovadores.
-        Responda cada questao de <strong>1</strong> a <strong>5</strong>,
+        Avaliação para PMEs, startups, instituições e projetos inovadores.
+        Responda cada questão de <strong>1</strong> a <strong>5</strong>,
         sendo <strong>1 = inexistente</strong> e <strong>5 = consolidado</strong>.
       </p>
 
@@ -579,12 +579,12 @@
     </section>
 
     <div class="layout">
-      <div class="left" id="dims" role="region" aria-label="Dimensoes de avaliacao"></div>
+      <div class="left" id="dims" role="region" aria-label="Dimensoes de avaliação"></div>
 
       <div class="right">
         <div class="result-bar">
-          <h2>Resultado por dimensao</h2>
-          <p>As barras abaixo mostram o desempenho medio em cada dimensao do AIDA-PI.</p>
+          <h2>Resultado por dimensão</h2>
+          <p>As barras abaixo mostram o desempenho médio em cada dimensão do AIDA-PI.</p>
 
           <div id="bars" role="region" aria-label="Barras de resultado"></div>
 
@@ -594,7 +594,7 @@
             </div>
 
             <div class="overall-meta">
-              <div class="overall-label">pontuacao geral (max. 5,0)</div>
+              <div class="overall-label">pontuação geral (max. 5,0)</div>
               <div class="level-badge" id="level-badge" style="background:#f4f7f8;color:#536770;" aria-live="polite">
                 Responda as perguntas acima
               </div>
@@ -602,21 +602,21 @@
           </div>
 
           <div class="actions">
-            <button class="btn btn-primary" id="btn-reco" aria-controls="reco-panel">Ver recomendacoes</button>
+            <button class="btn btn-primary" id="btn-reco" aria-controls="reco-panel">Ver recomendações</button>
             <button class="btn" id="btn-limpar">Limpar respostas</button>
           </div>
 
-          <div class="reco-panel" id="reco-panel" role="region" aria-label="Recomendacoes">
+          <div class="reco-panel" id="reco-panel" role="region" aria-label="Recomendações">
             <h4 id="reco-title"></h4>
             <p id="reco-text"></p>
-            <button class="reco-close" id="reco-close" aria-label="Fechar recomendacoes">Fechar</button>
+            <button class="reco-close" id="reco-close" aria-label="Fechar recomendações">Fechar</button>
           </div>
         </div>
 
         <div class="mini-card">
           <h3>Como interpretar</h3>
           <ul>
-            <li><strong>Awareness:</strong> conhecimento sobre PI e percepcao do valor estrategico da protecao.</li>
+            <li><strong>Awareness:</strong> conhecimento sobre PI e percepção do valor estrategico da protecao.</li>
             <li><strong>Identificacao:</strong> existencia de rotinas, responsaveis e gestao interna de PI.</li>
             <li><strong>Deposito:</strong> protecao formal, apoio tecnico e capacidade de decidir quando proteger.</li>
             <li><strong>Aproveitamento:</strong> exploracao comercial, valorizacao e uso estrategico dos ativos de PI.</li>
@@ -910,15 +910,15 @@
       if(total === 0){
         msg = 'Responda ao menos algumas perguntas para receber recomendacoes personalizadas.';
       } else if(total < 2){
-        msg = 'Priorize acoes de conscientizacao em propriedade intelectual, definicao de responsaveis internos e criacao de uma rotina minima para identificar ativos protegiveis.';
+        msg = 'Priorize ações de conscientização em propriedade intelectual, definição de responsáveis internos e criação de uma rotina mínima para identificar ativos protegíveis.';
       } else if(total < 3){
-        msg = 'O proximo passo e estruturar processos: estabelecer politica interna, revisar contratos, monitorar anterioridade e criar criterios para decidir quando proteger formalmente.';
+        msg = 'O próximo passo e estruturar processos: estabelecer politica interna, revisar contratos, monitorar anterioridade e criar critérios para decidir quando proteger formalmente.';
       } else if(total < 4){
-        msg = 'Sua organizacao ja apresenta base razoavel. Agora vale fortalecer o deposito estrategico, integrar PI a inovacao e avancar na exploracao economica dos ativos.';
+        msg = 'Sua organizacao ja apresenta base razoável. Agora vale fortalecer o depósito estratégico, integrar PI a inovação e avancar na exploração econômica dos ativos.';
       } else if(total < 4.5){
-        msg = 'A maturidade ja e elevada. O foco deve ser consolidar mecanismos de valorizacao, licenciamento, monitoramento de infracoes e uso estrategico da PI.';
+        msg = 'A maturidade já é elevada. O foco deve ser consolidar mecanismos de valorização, licenciamento, monitoramento de infrações e uso estratégico da PI.';
       } else {
-        msg = 'Sua organizacao demonstra alta maturidade em PI. O desafio passa a ser escalar o modelo, ampliar exploracao comercial e transformar PI em diferencial competitivo sustentavel.';
+        msg = 'Sua organização demonstra alta maturidade em PI. O desafio passa a ser escalar o modelo, ampliar exploração comercial e transformar PI em diferencial competitivo sustentavel.';
       }
 
       title.textContent = level.text;
