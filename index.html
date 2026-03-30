@@ -1,202 +1,812 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIDA-PI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIDA-PI — maturidade em propriedade intelectual</title>
 
-<style>
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:
-    linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
-    url("Background_biotech.jpg") center/cover fixed;
-}
+  <style>
+    :root{
+      --text:#20303a;
+      --muted:#5e6b73;
+      --border:rgba(32,48,58,0.10);
+      --shadow:0 10px 28px rgba(31,45,61,0.10);
+      --card:rgba(255,255,255,0.94);
+      --panel:rgba(255,255,255,0.92);
+      --overlay:rgba(255,255,255,0.88);
 
-.container{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-}
+      --green:#3B6D11;
+      --green-soft:#EAF3DE;
 
-h1{
-  text-align:center;
-  color:#1f6f8b;
-}
+      --purple:#534AB7;
+      --purple-soft:#EEEDFE;
 
-.card{
-  background:white;
-  border-radius:16px;
-  margin-bottom:15px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
+      --orange:#993C1D;
+      --orange-soft:#FAECE7;
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px;
-}
+      --teal:#085041;
+      --teal-soft:#E1F5EE;
 
-.body{
-  padding:15px;
-  display:none;
-}
+      --accent:#1f6f8b;
+      --accent-soft:#e8f3f7;
+    }
 
-.body.open{
-  display:block;
-}
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
 
-button{
-  cursor:pointer;
-}
+    body{
+      font-family:"Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        linear-gradient(var(--overlay), var(--overlay)),
+        url("Background_biotech.jpg") center/cover fixed no-repeat;
+      min-height:100vh;
+    }
 
-.score-btn{
-  width:40px;
-  height:40px;
-  margin:5px;
-  border-radius:10px;
-  border:1px solid #ccc;
-  background:#f5f5f5;
-  font-weight:bold;
-}
+    .page{
+      max-width:1180px;
+      margin:0 auto;
+      padding:30px 18px 44px;
+    }
 
-.score-btn.active{
-  background:#1f6f8b;
-  color:white;
-}
+    .hero{
+      background:rgba(255,255,255,0.80);
+      border:1px solid rgba(255,255,255,0.5);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:26px 24px 20px;
+      margin-bottom:22px;
+      backdrop-filter: blur(2px);
+    }
 
-.toggle{
-  background:#eee;
-  border:none;
-  padding:10px;
-  border-radius:10px;
-}
+    .hero-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      flex-wrap:wrap;
+    }
 
-.result{
-  background:white;
-  padding:20px;
-  border-radius:16px;
-  margin-top:20px;
-  text-align:center;
-}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:linear-gradient(90deg,#2d7f69,#4b8b3b);
+      color:#fff;
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:700;
+      box-shadow:0 6px 16px rgba(45,127,105,0.20);
+    }
 
-</style>
+    .nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .nav a{
+      text-decoration:none;
+      padding:10px 14px;
+      border-radius:12px;
+      background:rgba(255,255,255,0.88);
+      color:#33505a;
+      border:1px solid rgba(32,48,58,0.10);
+      font-weight:600;
+      transition:.18s ease;
+    }
+
+    .nav a:hover{
+      transform:translateY(-1px);
+      background:#f6f9fa;
+    }
+
+    .hero h1{
+      margin-top:14px;
+      font-size:clamp(30px,5vw,46px);
+      line-height:1.05;
+      color:#24474b;
+    }
+
+    .hero p{
+      margin-top:10px;
+      max-width:930px;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.55;
+    }
+
+    .legend-box{
+      margin-top:18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .legend-pill{
+      background:#f5f8f9;
+      border:1px solid rgba(32,48,58,0.08);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:14px;
+      color:#42535b;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:1.08fr 0.92fr;
+      gap:22px;
+      align-items:start;
+    }
+
+    .left,
+    .right{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .dim{
+      border:1px solid var(--border);
+      border-radius:22px;
+      overflow:hidden;
+      background:var(--card);
+      box-shadow:var(--shadow);
+    }
+
+    .dim-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px 18px;
+    }
+
+    .dim-header-left{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+    }
+
+    .dim-icon{
+      width:50px;
+      height:50px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      font-size:24px;
+      background:rgba(255,255,255,0.78);
+      flex-shrink:0;
+    }
+
+    .dim-title{
+      font-size:25px;
+      font-weight:700;
+      line-height:1;
+    }
+
+    .dim-sub{
+      font-size:14px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+
+    .dim-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0;
+    }
+
+    .score-pill{
+      font-size:15px;
+      font-weight:700;
+      padding:10px 14px;
+      border-radius:999px;
+      min-width:86px;
+      text-align:center;
+      background:rgba(255,255,255,0.80);
+      border:1px solid rgba(0,0,0,0.05);
+    }
+
+    .toggle-btn{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(32,48,58,0.10);
+      background:rgba(255,255,255,0.85);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      padding:0;
+      transition:.18s ease;
+    }
+
+    .toggle-btn:hover{
+      background:#f4f7f8;
+    }
+
+    .chevron{
+      font-size:18px;
+      color:#48616b;
+      transition:transform .2s ease;
+    }
+
+    .dim-body{
+      padding:0 18px 18px;
+      display:none;
+      border-top:1px solid rgba(32,48,58,0.07);
+      background:rgba(255,255,255,0.74);
+    }
+
+    .dim-body.open{
+      display:block;
+    }
+
+    .question{
+      padding:16px 0;
+      border-bottom:1px solid rgba(32,48,58,0.07);
+    }
+
+    .question:last-child{
+      border-bottom:none;
+      padding-bottom:6px;
+    }
+
+    .question p{
+      font-size:16px;
+      color:var(--text);
+      margin-bottom:12px;
+      line-height:1.5;
+    }
+
+    .stars{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .star{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(32,48,58,0.12);
+      background:#f7fafb;
+      cursor:pointer;
+      font-size:15px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#38505a;
+      transition:background .15s,color .15s, transform .15s, box-shadow .15s;
+      user-select:none;
+    }
+
+    .star:hover{
+      transform:translateY(-1px);
+      box-shadow:0 6px 14px rgba(31,45,61,0.08);
+    }
+
+    .result-bar,
+    .mini-card{
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:22px;
+      background:var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .result-bar h2,
+    .mini-card h3{
+      font-size:24px;
+      color:#24434a;
+      margin-bottom:10px;
+    }
+
+    .result-bar p{
+      color:var(--muted);
+      line-height:1.45;
+      margin-bottom:18px;
+    }
+
+    .bar-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .bar-label{
+      font-size:14px;
+      color:#42535b;
+      width:120px;
+      flex-shrink:0;
+      font-weight:600;
+    }
+
+    .bar-track{
+      flex:1;
+      height:12px;
+      border-radius:999px;
+      background:#eaf0f2;
+      overflow:hidden;
+    }
+
+    .bar-fill{
+      height:100%;
+      border-radius:999px;
+      transition:width .35s ease;
+    }
+
+    .bar-val{
+      width:42px;
+      text-align:right;
+      font-size:14px;
+      font-weight:700;
+      color:#2c4149;
+      flex-shrink:0;
+    }
+
+    .overall{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-top:18px;
+      padding-top:16px;
+      border-top:1px solid rgba(32,48,58,0.08);
+    }
+
+    .overall-score{
+      font-size:52px;
+      font-weight:800;
+      color:#1f6f8b;
+      line-height:1;
+    }
+
+    .overall-meta{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .overall-label{
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .level-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      font-size:14px;
+      font-weight:700;
+      padding:8px 14px;
+      border-radius:999px;
+    }
+
+    .actions{
+      margin-top:18px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      padding:12px 16px;
+      border-radius:14px;
+      border:1px solid rgba(32,48,58,0.10);
+      background:#f6f9fa;
+      font-size:14px;
+      color:#2c4149;
+      font-weight:700;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+      background:#eef4f6;
+    }
+
+    .btn-primary{
+      background:linear-gradient(90deg,#2d7f69,#4b8b3b);
+      color:#fff;
+      border:none;
+      box-shadow:0 8px 20px rgba(45,127,105,0.22);
+    }
+
+    .mini-card ul{
+      padding-left:18px;
+      color:#42545b;
+      line-height:1.65;
+    }
+
+    .theme-a .dim-header{ background:linear-gradient(180deg,var(--green-soft),#f7fcf5); }
+    .theme-a .dim-icon, .theme-a .score-pill{ color:var(--green); }
+
+    .theme-i .dim-header{ background:linear-gradient(180deg,var(--purple-soft),#faf8ff); }
+    .theme-i .dim-icon, .theme-i .score-pill{ color:var(--purple); }
+
+    .theme-d .dim-header{ background:linear-gradient(180deg,var(--orange-soft),#fff8f5); }
+    .theme-d .dim-icon, .theme-d .score-pill{ color:var(--orange); }
+
+    .theme-a2 .dim-header{ background:linear-gradient(180deg,var(--teal-soft),#f7fdfa); }
+    .theme-a2 .dim-icon, .theme-a2 .score-pill{ color:var(--teal); }
+
+    @media (max-width:980px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+
+      .overall{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+    }
+
+    @media (max-width:640px){
+      .page{
+        padding:18px 12px 34px;
+      }
+
+      .hero{
+        padding:20px 16px 18px;
+      }
+
+      .dim-header{
+        padding:16px;
+      }
+
+      .dim-body{
+        padding:0 16px 16px;
+      }
+
+      .dim-title{
+        font-size:22px;
+      }
+
+      .dim-icon{
+        width:44px;
+        height:44px;
+        font-size:21px;
+      }
+
+      .bar-label{
+        width:96px;
+        font-size:13px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="badge">🧬 AIDA-PI</div>
+        <div class="nav">
+          <a href="index.html">Página AIDA-PI</a>
+          <a href="trl.html">Ir para TRL</a>
+        </div>
+      </div>
 
-<div class="container">
+      <h1>AIDA-PI — maturidade em propriedade intelectual</h1>
+      <p>
+        Avaliação para PMEs, startups, instituições e projetos inovadores.
+        Responda cada questão de <strong>1</strong> a <strong>5</strong>,
+        sendo <strong>1 = inexistente</strong> e <strong>5 = consolidado</strong>.
+      </p>
 
-<h1>AIDA-PI</h1>
+      <div class="legend-box">
+        <div class="legend-pill"><strong>1</strong> = inexistente</div>
+        <div class="legend-pill"><strong>2</strong> = muito incipiente</div>
+        <div class="legend-pill"><strong>3</strong> = em desenvolvimento</div>
+        <div class="legend-pill"><strong>4</strong> = estruturado</div>
+        <div class="legend-pill"><strong>5</strong> = consolidado</div>
+      </div>
+    </section>
 
-<div id="app"></div>
+    <div class="layout">
+      <div class="left" id="dims"></div>
 
-<div class="result">
-<h2>Resultado</h2>
-<div id="score">0,0</div>
-</div>
+      <div class="right">
+        <div class="result-bar">
+          <h2>Resultado por dimensão</h2>
+          <p>As barras abaixo mostram o desempenho médio em cada dimensão do AIDA-PI.</p>
 
-</div>
+          <div id="bars"></div>
 
-<script>
+          <div class="overall">
+            <div>
+              <div class="overall-score" id="overall-score">0,0</div>
+            </div>
 
-const data = [
-{
-id:"awareness",
-title:"Awareness",
-questions:[
-"Conhecem propriedade intelectual?",
-"Diferenciam publicar e proteger?",
-"Sabem identificar ativos?",
-"Conhecem tipos de proteção?"
-]
-},
-{
-id:"identificacao",
-title:"Identificação",
-questions:[
-"Há política interna?",
-"Existe responsável?",
-"Monitoram concorrência?",
-"Contratos incluem PI?"
-]
-}
-];
+            <div class="overall-meta">
+              <div class="overall-label">pontuação geral (máx. 5,0)</div>
+              <div class="level-badge" id="level-badge" style="background:#f4f7f8;color:#536770;">
+                Responda as perguntas acima
+              </div>
+            </div>
+          </div>
 
-const state = {};
+          <div class="actions">
+            <button class="btn btn-primary" onclick="verRecomendacoes()">Ver recomendações</button>
+            <button class="btn" onclick="limparRespostas()">Limpar respostas</button>
+          </div>
+        </div>
 
-data.forEach(d=>{
-state[d.id] = new Array(d.questions.length).fill(0);
-});
+        <div class="mini-card">
+          <h3>Como interpretar</h3>
+          <ul>
+            <li><strong>Awareness:</strong> conhecimento sobre PI e percepção do valor estratégico da proteção.</li>
+            <li><strong>Identificação:</strong> existência de rotinas, responsáveis e gestão interna de PI.</li>
+            <li><strong>Depósito:</strong> proteção formal, apoio técnico e capacidade de decidir quando proteger.</li>
+            <li><strong>Aproveitamento:</strong> exploração comercial, valorização e uso estratégico dos ativos de PI.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 
-function toggle(id){
-const el = document.getElementById(id);
-el.classList.toggle("open");
-}
+  <script>
+    const dims = [
+      {
+        id:'a',
+        label:'Awareness',
+        sub:'Conhecimento em PI',
+        color:'#3B6D11',
+        bg:'#EAF3DE',
+        icon:'🔎',
+        theme:'theme-a',
+        questions:[
+          'Os sócios e colaboradores-chave sabem o que é propriedade intelectual (patente, marca, segredo industrial)?',
+          'A empresa conhece a diferença entre publicar/divulgar e proteger uma inovação?',
+          'A equipe sabe identificar quando um produto, processo ou marca pode ser protegido?',
+          'A empresa conhece os tipos de proteção de PI aplicáveis ao seu setor (patente, modelo de utilidade, marca, software)?'
+        ]
+      },
+      {
+        id:'i',
+        label:'Identificação',
+        sub:'Gestão interna de PI',
+        color:'#534AB7',
+        bg:'#EEEDFE',
+        icon:'🧭',
+        theme:'theme-i',
+        questions:[
+          'Existe alguma política ou rotina interna para identificar criações potencialmente protegíveis?',
+          'Há um responsável (interno ou externo) por questões de PI na empresa?',
+          'A empresa realiza monitoramento de concorrentes e anterioridade antes de lançar produtos?',
+          'Contratos com colaboradores e parceiros incluem cláusulas sobre titularidade de PI?'
+        ]
+      },
+      {
+        id:'d',
+        label:'Depósito',
+        sub:'Proteção formal',
+        color:'#993C1D',
+        bg:'#FAECE7',
+        icon:'🛡️',
+        theme:'theme-d',
+        questions:[
+          'A empresa já realizou depósito de pedido de patente, registro de marca ou outro título de PI?',
+          'Existe apoio jurídico ou de consultoria para a elaboração e depósito de pedidos de proteção?',
+          'A empresa tem orçamento destinado a custos de proteção de PI (taxas, honorários)?',
+          'Há processo para avaliar o custo-benefício de proteger formalmente uma inovação antes de depositar?'
+        ]
+      },
+      {
+        id:'a2',
+        label:'Aproveitamento',
+        sub:'Exploração comercial',
+        color:'#085041',
+        bg:'#E1F5EE',
+        icon:'🚀',
+        theme:'theme-a2',
+        questions:[
+          'A empresa já explorou comercialmente algum ativo de PI (licenciamento, cessão, parceria)?',
+          'Os ativos de PI da empresa são considerados no valuation ou em negociações com investidores?',
+          'Existe estratégia para transformar PI em fonte de receita (licenças, franquias, joint ventures)?',
+          'A empresa monitora possíveis infrações aos seus ativos de PI e sabe como agir?'
+        ]
+      }
+    ];
 
-function setScore(dim, q, val){
-state[dim][q] = val;
-render();
-}
+    const scores = {};
+    dims.forEach(d => {
+      scores[d.id] = Array(d.questions.length).fill(0);
+    });
 
-function calc(){
-let total = 0;
-let count = 0;
+    function toggleBody(dimId){
+      const body = document.getElementById(`body-${dimId}`);
+      const chev = document.getElementById(`chev-${dimId}`);
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      chev.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
 
-data.forEach(d=>{
-state[d.id].forEach(v=>{
-total += v;
-count++;
-});
-});
+    function setScore(dimId, qi, val){
+      scores[dimId][qi] = scores[dimId][qi] === val ? 0 : val;
+      render();
+    }
 
-return total/count;
-}
+    function getAvg(dimId){
+      return scores[dimId].reduce((a,b)=>a+b,0) / scores[dimId].length;
+    }
 
-function render(){
+    function getTotal(){
+      return dims.reduce((sum,d)=> sum + getAvg(d.id), 0) / dims.length;
+    }
 
-const app = document.getElementById("app");
-app.innerHTML = "";
+    function getLevel(total){
+      if(total === 0){
+        return {
+          text:'Responda as perguntas acima',
+          bg:'#f4f7f8',
+          color:'#536770'
+        };
+      }
+      if(total < 2){
+        return {
+          text:'Nível 1 — inicial',
+          bg:'#FCEBEB',
+          color:'#A32D2D'
+        };
+      }
+      if(total < 3){
+        return {
+          text:'Nível 2 — consciente',
+          bg:'#FAEEDA',
+          color:'#854F0B'
+        };
+      }
+      if(total < 4){
+        return {
+          text:'Nível 3 — estruturado',
+          bg:'#EEEDFE',
+          color:'#534AB7'
+        };
+      }
+      if(total < 4.5){
+        return {
+          text:'Nível 4 — avançado',
+          bg:'#EAF3DE',
+          color:'#3B6D11'
+        };
+      }
+      return {
+        text:'Nível 5 — estratégico',
+        bg:'#E1F5EE',
+        color:'#085041'
+      };
+    }
 
-data.forEach(d=>{
+    function renderBars(){
+      const colors = {
+        a:'#639922',
+        i:'#7F77DD',
+        d:'#D85A30',
+        a2:'#1D9E75'
+      };
 
-const card = document.createElement("div");
-card.className = "card";
+      const barsEl = document.getElementById('bars');
+      barsEl.innerHTML = dims.map(d => {
+        const avg = getAvg(d.id);
+        const pct = Math.round(avg * 20);
 
-card.innerHTML = `
-<div class="header">
-<h3>${d.title}</h3>
-<button class="toggle" onclick="toggle('body-${d.id}')">▼</button>
-</div>
+        return `
+          <div class="bar-row">
+            <span class="bar-label">${d.label}</span>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${pct}%;background:${colors[d.id]}"></div>
+            </div>
+            <span class="bar-val">${avg.toFixed(1).replace('.',',')}</span>
+          </div>
+        `;
+      }).join('');
 
-<div class="body" id="body-${d.id}">
-${d.questions.map((q,i)=>`
-<p>${q}</p>
-<div>
-${[1,2,3,4,5].map(v=>`
-<button 
-class="score-btn ${state[d.id][i]===v?'active':''}"
-onclick="event.stopPropagation(); setScore('${d.id}', ${i}, ${v})"
->${v}</button>
-`).join("")}
-</div>
-`).join("")}
-</div>
-`;
+      const total = getTotal();
+      document.getElementById('overall-score').textContent = total.toFixed(1).replace('.',',');
+      const badge = document.getElementById('level-badge');
+      const level = getLevel(total);
+      badge.textContent = level.text;
+      badge.style.background = level.bg;
+      badge.style.color = level.color;
+    }
 
-app.appendChild(card);
+    function render(){
+      const container = document.getElementById('dims');
+      container.innerHTML = '';
 
-});
+      dims.forEach((dim, di) => {
+        const avg = getAvg(dim.id);
 
-document.getElementById("score").innerText = calc().toFixed(1);
+        const el = document.createElement('div');
+        el.className = `dim ${dim.theme}`;
+        el.innerHTML = `
+          <div class="dim-header">
+            <div class="dim-header-left">
+              <div class="dim-icon">${dim.icon}</div>
+              <div>
+                <div class="dim-title">${dim.label}</div>
+                <div class="dim-sub">${dim.sub}</div>
+              </div>
+            </div>
 
-}
+            <div class="dim-actions">
+              <div class="score-pill">${avg.toFixed(1).replace('.',',')} / 5</div>
+              <button
+                type="button"
+                class="toggle-btn"
+                onclick="toggleBody('${dim.id}')"
+                aria-label="Abrir ou fechar ${dim.label}"
+              >
+                <span class="chevron" id="chev-${dim.id}" style="${di===0 ? 'transform:rotate(180deg);' : ''}">⌃</span>
+              </button>
+            </div>
+          </div>
 
-render();
+          <div class="dim-body ${di===0 ? 'open' : ''}" id="body-${dim.id}">
+            ${dim.questions.map((q,qi)=>`
+              <div class="question">
+                <p>${q}</p>
+                <div class="stars">
+                  ${[1,2,3,4,5].map(v=>`
+                    <button
+                      type="button"
+                      class="star"
+                      style="${scores[dim.id][qi] === v ? `background:${dim.color};color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(31,45,61,0.16);` : ''}"
+                      onclick="event.stopPropagation(); setScore('${dim.id}',${qi},${v})"
+                    >${v}</button>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(el);
+      });
 
-</script>
+      renderBars();
+    }
 
+    function limparRespostas(){
+      dims.forEach(d => {
+        scores[d.id] = Array(d.questions.length).fill(0);
+      });
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function verRecomendacoes(){
+      const total = getTotal();
+      let msg = '';
+
+      if(total < 2){
+        msg = 'Priorize ações de conscientização em propriedade intelectual, definição de responsáveis internos e criação de uma rotina mínima para identificar ativos protegíveis.';
+      } else if(total < 3){
+        msg = 'O próximo passo é estruturar processos: estabelecer política interna, revisar contratos, monitorar anterioridade e criar critérios para decidir quando proteger formalmente.';
+      } else if(total < 4){
+        msg = 'Sua organização já apresenta base razoável. Agora vale fortalecer o depósito estratégico, integrar PI à inovação e avançar na exploração econômica dos ativos.';
+      } else if(total < 4.5){
+        msg = 'A maturidade já é elevada. O foco deve ser consolidar mecanismos de valorização, licenciamento, monitoramento de infrações e uso estratégico da PI.';
+      } else {
+        msg = 'Sua organização demonstra alta maturidade em PI. O desafio passa a ser escalar o modelo, ampliar exploração comercial e transformar PI em diferencial competitivo sustentável.';
+      }
+
+      alert(msg);
+    }
+
+    render();
+  </script>
 </body>
 </html>
