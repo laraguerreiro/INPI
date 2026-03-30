@@ -1,0 +1,170 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1.5rem 1rem 2rem;max-width:680px}
+.header{text-align:center;margin-bottom:1.5rem}
+.header h2{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.header p{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.dim{border:0.5px solid var(--color-border-tertiary);border-radius:12px;margin-bottom:1rem;overflow:hidden}
+.dim-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;background:var(--color-background-secondary)}
+.dim-header:hover{background:var(--color-background-tertiary)}
+.badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.dim-title{flex:1;font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.dim-sub{font-size:12px;color:var(--color-text-secondary)}
+.score-pill{font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px;min-width:52px;text-align:center}
+.chevron{font-size:12px;color:var(--color-text-tertiary);transition:transform .2s}
+.dim-body{padding:16px;display:none;border-top:0.5px solid var(--color-border-tertiary)}
+.dim-body.open{display:block}
+.question{margin-bottom:14px}
+.question p{font-size:13px;color:var(--color-text-primary);margin-bottom:8px;line-height:1.5}
+.stars{display:flex;gap:6px}
+.star{width:28px;height:28px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);transition:background .15s,color .15s}
+.star:hover{background:var(--color-background-info);color:var(--color-text-info)}
+.star.on{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.result-bar{margin-top:1.5rem;border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:16px;background:var(--color-background-secondary)}
+.result-bar h3{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{font-size:12px;color:var(--color-text-secondary);width:90px;flex-shrink:0}
+.bar-track{flex:1;height:8px;border-radius:4px;background:var(--color-background-tertiary);overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.bar-val{font-size:12px;font-weight:500;color:var(--color-text-primary);width:28px;text-align:right}
+.overall{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:14px;border-top:0.5px solid var(--color-border-tertiary)}
+.overall-score{font-size:28px;font-weight:500;color:var(--color-text-primary)}
+.overall-label{font-size:13px;color:var(--color-text-secondary)}
+.level-badge{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;margin-top:4px;display:inline-block}
+.btn{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 16px;border-radius:8px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-primary);cursor:pointer}
+.btn:hover{background:var(--color-background-secondary)}
+</style>
+<div class="wrap">
+  <div class="header">
+    <h2>AIDA-PI — maturidade em propriedade intelectual</h2>
+    <p>Avaliação para PMEs e startups · Responda de 1 (inexistente) a 5 (consolidado)</p>
+  </div>
+  <div id="dims"></div>
+  <div class="result-bar" id="results">
+    <h3>Resultado por dimensão</h3>
+    <div id="bars"></div>
+    <div class="overall">
+      <div>
+        <div class="overall-score" id="overall-score">0,0</div>
+        <div class="overall-label">pontuação geral (máx. 5,0)</div>
+        <div class="level-badge" id="level-badge" style="background:var(--color-background-secondary);color:var(--color-text-secondary)">Responda as perguntas acima</div>
+      </div>
+    </div>
+    <button class="btn" onclick="sendPrompt('Com base nos resultados do AIDA-PI, quais são as recomendações para melhorar a maturidade em PI da minha empresa?')">Ver recomendações ↗</button>
+  </div>
+</div>
+<script>
+const dims = [
+  {
+    id:'a', label:'Awareness', sub:'Conhecimento em PI', color:'#3B6D11', bg:'#EAF3DE', border:'#97C459',
+    questions:[
+      'Os sócios e colaboradores-chave sabem o que é propriedade intelectual (patente, marca, segredo industrial)?',
+      'A empresa conhece a diferença entre publicar/divulgar e proteger uma inovação?',
+      'A equipe sabe identificar quando um produto, processo ou marca pode ser protegido?',
+      'A empresa conhece os tipos de proteção de PI aplicáveis ao seu setor (patente, modelo de utilidade, marca, software)?',
+    ]
+  },
+  {
+    id:'i', label:'Identificação', sub:'Gestão interna de PI', color:'#534AB7', bg:'#EEEDFE', border:'#AFA9EC',
+    questions:[
+      'Existe alguma política ou rotina interna para identificar criações potencialmente protegíveis?',
+      'Há um responsável (interno ou externo) por questões de PI na empresa?',
+      'A empresa realiza monitoramento de concorrentes e anterioridade antes de lançar produtos?',
+      'Contratos com colaboradores e parceiros incluem cláusulas sobre titularidade de PI?',
+    ]
+  },
+  {
+    id:'d', label:'Depósito', sub:'Proteção formal', color:'#993C1D', bg:'#FAECE7', border:'#F0997B',
+    questions:[
+      'A empresa já realizou depósito de pedido de patente, registro de marca ou outro título de PI?',
+      'Existe apoio jurídico ou de consultoria para a elaboração e depósito de pedidos de proteção?',
+      'A empresa tem orçamento destinado a custos de proteção de PI (taxas, honorários)?',
+      'Há processo para avaliar o custo-benefício de proteger formalmente uma inovação antes de depositar?',
+    ]
+  },
+  {
+    id:'a2', label:'Aproveitamento', sub:'Exploração comercial', color:'#085041', bg:'#E1F5EE', border:'#5DCAA5',
+    questions:[
+      'A empresa já explorou comercialmente algum ativo de PI (licenciamento, cessão, parceria)?',
+      'Os ativos de PI da empresa são considerados no valuation ou em negociações com investidores?',
+      'Existe estratégia para transformar PI em fonte de receita (licenças, franquias, joint ventures)?',
+      'A empresa monitora possíveis infrações aos seus ativos de PI e sabe como agir?',
+    ]
+  }
+];
+
+const scores = {};
+dims.forEach(d => { scores[d.id] = Array(d.questions.length).fill(0); });
+
+function render() {
+  const container = document.getElementById('dims');
+  container.innerHTML = '';
+  dims.forEach((dim, di) => {
+    const avg = scores[dim.id].reduce((a,b)=>a+b,0) / dim.questions.length;
+    const pct = Math.round(avg * 20);
+    const el = document.createElement('div');
+    el.className = 'dim';
+    el.innerHTML = `
+      <div class="dim-header" onclick="toggle('body-${dim.id}', this)">
+        <div>
+          <div class="dim-title">${dim.label}</div>
+          <div class="dim-sub">${dim.sub}</div>
+        </div>
+        <div class="score-pill" style="background:${dim.bg};color:${dim.color}">${avg.toFixed(1)} / 5</div>
+        <span class="chevron" id="chev-${dim.id}">▼</span>
+      </div>
+      <div class="dim-body ${di===0?'open':''}" id="body-${dim.id}">
+        ${dim.questions.map((q,qi)=>`
+          <div class="question">
+            <p>${q}</p>
+            <div class="stars">
+              ${[1,2,3,4,5].map(v=>`<div class="star ${scores[dim.id][qi]>=v?'on':''}" onclick="setScore('${dim.id}',${qi},${v})">${v}</div>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+    container.appendChild(el);
+  });
+  renderBars();
+}
+
+function toggle(bodyId, header) {
+  const body = document.getElementById(bodyId);
+  const dimId = bodyId.replace('body-','');
+  const chev = document.getElementById('chev-'+dimId);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+function setScore(dimId, qi, val) {
+  scores[dimId][qi] = scores[dimId][qi] === val ? 0 : val;
+  render();
+}
+
+function renderBars() {
+  const colors = {a:'#639922',i:'#7F77DD',d:'#D85A30',a2:'#1D9E75'};
+  const barsEl = document.getElementById('bars');
+  barsEl.innerHTML = dims.map(d => {
+    const avg = scores[d.id].reduce((a,b)=>a+b,0)/d.questions.length;
+    const pct = Math.round(avg*20);
+    return `<div class="bar-row">
+      <span class="bar-label">${d.label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${colors[d.id]}"></div></div>
+      <span class="bar-val">${avg.toFixed(1)}</span>
+    </div>`;
+  }).join('');
+  const total = dims.reduce((s,d)=>s + scores[d.id].reduce((a,b)=>a+b,0)/d.questions.length,0)/dims.length;
+  document.getElementById('overall-score').textContent = total.toFixed(1).replace('.',',');
+  const badge = document.getElementById('level-badge');
+  if(total===0){badge.textContent='Responda as perguntas acima';badge.style.background='var(--color-background-secondary)';badge.style.color='var(--color-text-secondary)';}
+  else if(total<2){badge.textContent='Nível 1 — inicial';badge.style.background='#FCEBEB';badge.style.color='#A32D2D';}
+  else if(total<3){badge.textContent='Nível 2 — consciente';badge.style.background='#FAEEDA';badge.style.color='#854F0B';}
+  else if(total<4){badge.textContent='Nível 3 — estruturado';badge.style.background='#EEEDFE';badge.style.color='#534AB7';}
+  else if(total<4.5){badge.textContent='Nível 4 — avançado';badge.style.background='#EAF3DE';badge.style.color='#3B6D11';}
+  else{badge.textContent='Nível 5 — estratégico';badge.style.background='#E1F5EE';badge.style.color='#085041';}
+}
+
+render();
+</script>
