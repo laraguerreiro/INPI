@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRL — Diagnostico de Maturidade Tecnologica</title>
+  <style>
+    :root{
+      --bg-overlay: rgba(255,255,255,0.90);
+      --card: rgba(255,255,255,0.95);
+      --text: #20303a;
+      --muted: #5e6b73;
+      --border: rgba(32,48,58,0.10);
+      --shadow: 0 10px 28px rgba(31,45,61,0.10);
+      --accent: #1f6f8b;
+      --accent-soft: #e8f3f7;
+      --green: #4b8b3b;
+      --green-soft: #eaf5e5;
+      --purple: #7a63c7;
+      --purple-soft: #f0ebff;
+      --orange: #d36b4f;
+      --orange-soft: #fff0ea;
+      --teal: #2f9a85;
+      --teal-soft: #e7f8f4;
+      --blue-soft: #e9f2ff;
+      --gold-soft: #fff8e8;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(var(--bg-overlay), var(--bg-overlay)),
+        url("Background_biotech.jpg") center/cover fixed no-repeat;
+    }
+
+    .container{
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 34px 20px 56px;
+    }
+
+    .hero{
+      background: rgba(255,255,255,0.80);
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .topline{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background: linear-gradient(90deg, #1f6f8b, #2f9a85);
+      color:#fff;
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:700;
+      box-shadow: 0 6px 16px rgba(31,111,139,0.18);
+    }
+
+    .nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .nav a{
+      text-decoration:none;
+      padding:10px 14px;
+      border-radius:12px;
+      background: rgba(255,255,255,0.88);
+      color:#33505a;
+      border:1px solid rgba(32,48,58,0.10);
+      font-weight:600;
+      transition:.18s ease;
+    }
+
+    .nav a:hover{
+      transform: translateY(-1px);
+      background:#f6f9fa;
+    }
+
+    .hero h1{
+      margin:14px 0 8px;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height:1.05;
+      color:#24474b;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:960px;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.55;
+    }
+
+    .legend-box{
+      margin-top:18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .legend-pill{
+      background:#f5f8f9;
+      border:1px solid rgba(32,48,58,0.08);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:14px;
+      color:#42535b;
+    }
+
+    .legend-pill strong{
+      color:#25474a;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .left, .right{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+
+    .trl-card, .panel, .mini-card{
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius:22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .trl-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      padding:18px 20px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .trl-title-wrap{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .trl-icon{
+      width:52px;
+      height:52px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      font-size:24px;
+      background: rgba(255,255,255,0.78);
+      flex-shrink:0;
+    }
+
+    .trl-icon svg{
+      width:26px;
+      height:26px;
+    }
+
+    .trl-title{
+      margin:0;
+      font-size:28px;
+      line-height:1;
+    }
+
+    .trl-sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .trl-score{
+      min-width:92px;
+      text-align:center;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:15px;
+      background: rgba(255,255,255,0.80);
+      border:1px solid rgba(0,0,0,0.05);
+    }
+
+    .chevron-btn{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(32,48,58,0.10);
+      background: rgba(255,255,255,0.85);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      padding:0;
+    }
+
+    .chevron-btn:hover{ background:#f4f7f8; }
+
+    .chevron{
+      display:block;
+      width:18px;
+      height:18px;
+      transition: transform .2s ease;
+    }
+
+    .chevron svg{
+      display:block;
+      width:100%;
+      height:100%;
+    }
+
+    .trl-body{
+      padding:0 20px 20px;
+      max-height:0;
+      overflow:hidden;
+      transition: max-height .3s ease, padding .3s ease;
+      padding-top:0;
+      padding-bottom:0;
+    }
+
+    .trl-body.open{
+      max-height:2000px;
+      padding:0 20px 20px;
+    }
+
+    .question{
+      padding:18px 0;
+      border-top:1px solid rgba(32,48,58,0.08);
+    }
+
+    .question:first-child{
+      border-top:none;
+      padding-top:4px;
+    }
+
+    .question-text{
+      font-size:17px;
+      line-height:1.45;
+      margin-bottom:14px;
+      color:#243740;
+    }
+
+    .answer-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .answer-btn{
+      min-width:92px;
+      height:42px;
+      padding:0 16px;
+      border-radius:12px;
+      border:1px solid rgba(32,48,58,0.12);
+      background:#f7fafb;
+      color:#38505a;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .answer-btn:hover{
+      transform: translateY(-1px);
+      box-shadow:0 6px 14px rgba(31,45,61,0.08);
+    }
+
+    .answer-btn.active{
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 8px 18px rgba(31,45,61,0.16);
+    }
+
+    .panel{
+      padding:22px;
+    }
+
+    .panel h2{
+      margin:0 0 10px;
+      font-size:24px;
+      color:#24434a;
+    }
+
+    .panel p{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .progress-line{
+      margin-bottom:16px;
+    }
+
+    .progress-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:7px;
+      font-size:15px;
+      font-weight:600;
+    }
+
+    .progress-track{
+      width:100%;
+      height:14px;
+      border-radius:999px;
+      overflow:hidden;
+      background:#eef3f5;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      transition: width .35s ease;
+    }
+
+    .overall-card{
+      margin-top:18px;
+      padding:18px;
+      border-radius:18px;
+      background: linear-gradient(180deg, rgba(232,243,247,0.9), rgba(255,255,255,0.95));
+      border:1px solid rgba(31,111,139,0.10);
+    }
+
+    .overall-grid{
+      display:grid;
+      grid-template-columns: 140px 1fr;
+      gap:16px;
+      align-items:center;
+    }
+
+    .overall-score{
+      font-size:52px;
+      font-weight:800;
+      line-height:1;
+      color:#1f6f8b;
+      text-align:center;
+    }
+
+    .overall-label{
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      margin-top:6px;
+    }
+
+    .level-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:14px;
+      margin-bottom:10px;
+      background:#f4f7f8;
+      color:#536770;
+      transition: background .25s, color .25s;
+    }
+
+    .level-desc{
+      color:#31454e;
+      line-height:1.5;
+      font-size:15px;
+      margin-bottom:10px;
+    }
+
+    .next-step{
+      background:#f8fbfc;
+      border:1px solid rgba(32,48,58,0.08);
+      border-radius:14px;
+      padding:14px;
+      color:#40535b;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .actions{
+      margin-top:20px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:13px 18px;
+      border-radius:14px;
+      font-size:15px;
+      font-weight:700;
+      transition:.18s ease;
+    }
+
+    .btn-primary{
+      background: linear-gradient(90deg, #1f6f8b, #2f9a85);
+      color:#fff;
+      box-shadow:0 8px 20px rgba(31,111,139,0.22);
+    }
+
+    .btn-secondary{
+      background:#f4f7f8;
+      color:#38505a;
+      border:1px solid rgba(32,48,58,0.10);
+    }
+
+    .btn:hover{
+      transform: translateY(-1px);
+    }
+
+    .mini-card{
+      padding:18px;
+    }
+
+    .mini-card h3{
+      margin:0 0 10px;
+      font-size:20px;
+      color:#24434a;
+    }
+
+    .mini-card ul{
+      margin:0;
+      padding-left:20px;
+      color:#42545b;
+      line-height:1.6;
+    }
+
+    /* Inline result panel */
+    .result-panel{
+      margin-top:18px;
+      padding:20px;
+      border-radius:16px;
+      background:#f2faf7;
+      border:1px solid rgba(31,111,139,0.15);
+      display:none;
+      animation:fadeIn .3s ease;
+    }
+
+    .result-panel.open{
+      display:block;
+    }
+
+    .result-panel h4{
+      font-size:16px;
+      color:#24434a;
+      margin-bottom:6px;
+    }
+
+    .result-panel .rp-badge{
+      font-size:14px;
+      font-weight:700;
+      color:#1f6f8b;
+      margin-bottom:8px;
+    }
+
+    .result-panel .rp-desc{
+      font-size:15px;
+      color:#42535b;
+      line-height:1.55;
+      margin-bottom:10px;
+    }
+
+    .result-panel .rp-next{
+      font-size:14px;
+      color:#40535b;
+      line-height:1.5;
+      background:#f8fbfc;
+      border:1px solid rgba(32,48,58,0.08);
+      border-radius:12px;
+      padding:12px;
+    }
+
+    .result-panel .rp-close{
+      margin-top:12px;
+      font-size:13px;
+      color:var(--muted);
+      background:none;
+      border:none;
+      cursor:pointer;
+      text-decoration:underline;
+    }
+
+    @keyframes fadeIn{
+      from{ opacity:0; transform:translateY(6px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    .theme-1 .trl-header{ background: linear-gradient(180deg, var(--green-soft), #f7fcf5); }
+    .theme-2 .trl-header{ background: linear-gradient(180deg, var(--blue-soft), #f8fbff); }
+    .theme-3 .trl-header{ background: linear-gradient(180deg, var(--purple-soft), #faf8ff); }
+    .theme-4 .trl-header{ background: linear-gradient(180deg, var(--accent-soft), #f8fcfe); }
+    .theme-5 .trl-header{ background: linear-gradient(180deg, var(--gold-soft), #fffdf6); }
+    .theme-6 .trl-header{ background: linear-gradient(180deg, var(--orange-soft), #fff8f5); }
+    .theme-7 .trl-header{ background: linear-gradient(180deg, var(--teal-soft), #f7fdfa); }
+    .theme-8 .trl-header{ background: linear-gradient(180deg, #eef6ff, #fafcff); }
+    .theme-9 .trl-header{ background: linear-gradient(180deg, #eef8f2, #fbfefc); }
+    .theme-10 .trl-header{ background: linear-gradient(180deg, #fff2e8, #fffaf6); }
+
+    .theme-1 .trl-icon, .theme-1 .trl-score{ color: var(--green); }
+    .theme-2 .trl-icon, .theme-2 .trl-score{ color: #4474c5; }
+    .theme-3 .trl-icon, .theme-3 .trl-score{ color: var(--purple); }
+    .theme-4 .trl-icon, .theme-4 .trl-score{ color: var(--accent); }
+    .theme-5 .trl-icon, .theme-5 .trl-score{ color: #b08b14; }
+    .theme-6 .trl-icon, .theme-6 .trl-score{ color: var(--orange); }
+    .theme-7 .trl-icon, .theme-7 .trl-score{ color: var(--teal); }
+    .theme-8 .trl-icon, .theme-8 .trl-score{ color: #3d6fb9; }
+    .theme-9 .trl-icon, .theme-9 .trl-score{ color: #3c9360; }
+    .theme-10 .trl-icon, .theme-10 .trl-score{ color: #c56b2c; }
+
+    @media (max-width: 980px){
+      .layout{ grid-template-columns: 1fr; }
+      .overall-grid{ grid-template-columns: 1fr; }
+      .overall-score, .overall-label{ text-align:left; }
+    }
+
+    @media (max-width: 640px){
+      .container{ padding:18px 12px 36px; }
+      .hero{ padding:20px 18px 18px; }
+      .trl-header{ padding:16px; }
+      .trl-body.open{ padding:0 16px 16px; }
+      .trl-title{ font-size:24px; }
+      .question-text{ font-size:16px; }
+      .answer-btn{ min-width:84px; }
+      .panel{ padding:18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div class="topline">
+        <div class="badge" role="banner">TRL</div>
+        <nav class="nav" aria-label="Navegacao principal">
+          <a href="index.html">Ir para AIDA-PI</a>
+          <a href="trl.html">Pagina TRL</a>
+        </nav>
+      </div>
+
+      <h1>Diagnostico de maturidade tecnologica do projeto</h1>
+      <p>
+        Esta ferramenta ajuda a identificar em que estagio de desenvolvimento tecnologico o projeto se encontra,
+        desde a observacao dos principios basicos ate a insercao no mercado. Responda cada pergunta com
+        <strong>Sim</strong>, <strong>Parcial</strong> ou <strong>Nao</strong>.
+      </p>
+
+      <div class="legend-box" role="list" aria-label="Legenda das respostas">
+        <div class="legend-pill" role="listitem"><strong>Sim</strong> = requisito plenamente atendido</div>
+        <div class="legend-pill" role="listitem"><strong>Parcial</strong> = evidencias iniciais ou incompletas</div>
+        <div class="legend-pill" role="listitem"><strong>Nao</strong> = requisito ainda nao atendido</div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div class="left" id="trlLevels" role="region" aria-label="Niveis TRL"></div>
+
+      <div class="right">
+        <section class="panel">
+          <h2>Progresso por nivel</h2>
+          <p>As barras mostram o grau de atendimento de cada nivel do TRL.</p>
+
+          <div id="progressBars" role="region" aria-label="Barras de progresso"></div>
+
+          <div class="overall-card">
+            <div class="overall-grid">
+              <div>
+                <div class="overall-score" id="trlScore" aria-live="polite">TRL 0</div>
+                <div class="overall-label">nivel identificado</div>
+              </div>
+              <div>
+                <div class="level-badge" id="trlBadge" aria-live="polite">Responda as perguntas</div>
+                <div class="level-desc" id="trlDesc">
+                  Preencha os niveis para identificar o estagio de maturidade tecnologica do projeto.
+                </div>
+                <div class="next-step" id="trlNextStep">
+                  O proximo passo aparecera aqui conforme as respostas forem preenchidas.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="btn-leitura" aria-controls="result-panel">Ver leitura do resultado</button>
+            <button class="btn btn-secondary" id="btn-limpar">Limpar respostas</button>
+          </div>
+
+          <div class="result-panel" id="result-panel" role="region" aria-label="Leitura do resultado">
+            <h4 id="rp-score"></h4>
+            <div class="rp-badge" id="rp-badge"></div>
+            <div class="rp-desc" id="rp-desc"></div>
+            <div class="rp-next" id="rp-next"></div>
+            <button class="rp-close" id="rp-close" aria-label="Fechar leitura">Fechar</button>
+          </div>
+        </section>
+
+        <section class="mini-card">
+          <h3>Como interpretar</h3>
+          <ul>
+            <li><strong>TRL 1-3:</strong> fase de pesquisa, conceito e prova de conceito.</li>
+            <li><strong>TRL 4-6:</strong> fase de validacao e demonstracao em ambiente relevante.</li>
+            <li><strong>TRL 7-9:</strong> fase de prototipagem avancada, qualificacao e operacao real.</li>
+            <li><strong>TRL 10:</strong> insercao no mercado, adocao e exploracao comercial.</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'trl-scores';
+
+    const svgIcons = {
+      lightbulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>',
+      brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 4.56 2.94A4 4 0 0 1 20 9a4 4 0 0 1-1.47 3.09A5 5 0 0 1 12 22a5 5 0 0 1-6.53-9.91A4 4 0 0 1 4 9a4 4 0 0 1 3.44-3.96A5 5 0 0 1 12 2z"/><path d="M12 2v20"/></svg>',
+      flask: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4 20h16l-6-10.5V3"/></svg>',
+      microscope: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2z"/></svg>',
+      beaker: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 3h15"/><path d="M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3"/><path d="M6 14h12"/></svg>',
+      gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
+      factory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 20V8l5 4V8l5 4V4h3v16"/></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+      globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+      trendUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+      chevronUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>'
+    };
+
+    const trlData = [
+      {
+        id: "trl1", level: 1,
+        title: "TRL 1", subtitle: "Principios basicos observados",
+        icon: "lightbulb", theme: "theme-1", color: "#4b8b3b",
+        questions: [
+          "Os principios cientificos ou tecnicos relacionados a solucao ja foram identificados?",
+          "Existe base teorica ou bibliografica que sustente a possibilidade da tecnologia?",
+          "O problema tecnico e a logica cientifica da solucao estao claramente definidos?"
+        ]
+      },
+      {
+        id: "trl2", level: 2,
+        title: "TRL 2", subtitle: "Conceito tecnologico formulado",
+        icon: "brain", theme: "theme-2", color: "#4474c5",
+        questions: [
+          "Ja existe uma ideia de solucao ou conceito tecnologico claramente formulado?",
+          "A tecnologia proposta ja foi descrita em termos funcionais ou conceituais?",
+          "Foram identificadas possiveis aplicacoes praticas para a solucao?"
+        ]
+      },
+      {
+        id: "trl3", level: 3,
+        title: "TRL 3", subtitle: "Prova de conceito experimental",
+        icon: "flask", theme: "theme-3", color: "#7a63c7",
+        questions: [
+          "Ja foram realizados experimentos iniciais para verificar a viabilidade da solucao?",
+          "Existe alguma evidencia experimental de que o conceito funciona?",
+          "A prova de conceito foi documentada de forma tecnica ou cientifica?"
+        ]
+      },
+      {
+        id: "trl4", level: 4,
+        title: "TRL 4", subtitle: "Validacao em laboratorio",
+        icon: "microscope", theme: "theme-4", color: "#1f6f8b",
+        questions: [
+          "Os componentes principais da tecnologia ja foram testados em laboratorio?",
+          "Ha resultados que demonstrem funcionamento controlado da solucao em ambiente laboratorial?",
+          "Os testes laboratoriais permitiram validar a base tecnica da solucao?"
+        ]
+      },
+      {
+        id: "trl5", level: 5,
+        title: "TRL 5", subtitle: "Validacao em ambiente relevante",
+        icon: "beaker", theme: "theme-5", color: "#b08b14",
+        questions: [
+          "A tecnologia ja foi testada em condicoes mais proximas do uso pretendido?",
+          "Ha validacao em ambiente relevante, ainda que em escala reduzida?",
+          "Os testes ja consideraram variaveis externas importantes para a aplicacao?"
+        ]
+      },
+      {
+        id: "trl6", level: 6,
+        title: "TRL 6", subtitle: "Demonstracao em ambiente relevante",
+        icon: "gear", theme: "theme-6", color: "#d36b4f",
+        questions: [
+          "Existe um prototipo, piloto ou sistema parcial demonstrado em ambiente relevante?",
+          "A tecnologia ja foi testada de forma integrada, com seus principais elementos funcionando juntos?",
+          "Os resultados demonstram desempenho consistente em situacao proxima da aplicacao real?"
+        ]
+      },
+      {
+        id: "trl7", level: 7,
+        title: "TRL 7", subtitle: "Prototipo em ambiente operacional",
+        icon: "factory", theme: "theme-7", color: "#2f9a85",
+        questions: [
+          "Ja existe prototipo funcional operando em ambiente operacional ou de campo?",
+          "A solucao foi testada com usuarios, processos ou condicoes reais de operacao?",
+          "O projeto ja passou da fase de laboratorio e demonstra aplicabilidade em contexto operacional?"
+        ]
+      },
+      {
+        id: "trl8", level: 8,
+        title: "TRL 8", subtitle: "Sistema completo e qualificado",
+        icon: "check", theme: "theme-8", color: "#3d6fb9",
+        questions: [
+          "O sistema ou produto ja esta praticamente completo e qualificado?",
+          "A tecnologia ja passou por testes finais, validacoes tecnicas ou requisitos regulatorios relevantes?",
+          "O desenvolvimento tecnico esta suficientemente consolidado para implantacao?"
+        ]
+      },
+      {
+        id: "trl9", level: 9,
+        title: "TRL 9", subtitle: "Sistema comprovado em operacao real",
+        icon: "globe", theme: "theme-9", color: "#3c9360",
+        questions: [
+          "A tecnologia ja foi utilizada em operacao real ou contexto real de uso?",
+          "Ha comprovacao de desempenho em ambiente real, fora da fase de testes controlados?",
+          "O projeto ja demonstrou funcionalidade plena em sua aplicacao pratica?"
+        ]
+      },
+      {
+        id: "trl10", level: 10,
+        title: "TRL 10", subtitle: "Mercado e exploracao comercial",
+        icon: "trendUp", theme: "theme-10", color: "#c56b2c",
+        questions: [
+          "A solucao ja esta inserida no mercado ou em uso institucional regular?",
+          "Ha adocao por clientes, usuarios ou parceiros em escala pratica?",
+          "A tecnologia ja gera valor economico, impacto mensuravel ou exploracao comercial?"
+        ]
+      }
+    ];
+
+    const ANSWERS = { "nao": 0, "parcial": 0.5, "sim": 1 };
+
+    // --- State ---
+    const state = {};
+    const openLevels = {};
+
+    function initState(){
+      trlData.forEach(item => {
+        state[item.id] = new Array(item.questions.length).fill(null);
+        openLevels[item.id] = false;
+      });
+      openLevels[trlData[0].id] = true;
+    }
+
+    // --- localStorage ---
+    function saveToStorage(){
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch(e) {}
+    }
+
+    function loadFromStorage(){
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved){
+          const parsed = JSON.parse(saved);
+          trlData.forEach(item => {
+            if(Array.isArray(parsed[item.id]) && parsed[item.id].length === item.questions.length){
+              state[item.id] = parsed[item.id];
+            }
+          });
+        }
+      } catch(e) {}
+    }
+
+    // --- Calculations ---
+    function getLevelAverage(levelId){
+      const values = state[levelId];
+      const answered = values.filter(v => v !== null);
+      if(answered.length === 0) return 0;
+      return values.reduce((acc, val) => acc + (val ?? 0), 0) / values.length;
+    }
+
+    function getConsolidatedTRL(){
+      let consolidated = 0;
+      for(const item of trlData){
+        if(getLevelAverage(item.id) === 1){
+          consolidated = item.level;
+        } else {
+          break;
+        }
+      }
+      return consolidated;
+    }
+
+    function getEstimatedTRL(){
+      const consolidated = getConsolidatedTRL();
+      let estimated = consolidated;
+      for(const item of trlData){
+        if(item.level > consolidated && getLevelAverage(item.id) > 0){
+          estimated = item.level;
+          break;
+        }
+      }
+      return estimated;
+    }
+
+    function getResultText(){
+      const consolidated = getConsolidatedTRL();
+      const estimated = getEstimatedTRL();
+
+      if(consolidated === 0 && estimated === 0){
+        return {
+          score: "TRL 0",
+          badge: "Responda as perguntas",
+          badgeBg: "#f4f7f8", badgeColor: "#536770",
+          desc: "Preencha os niveis para identificar o estagio de maturidade tecnologica do projeto.",
+          next: "Comece avaliando os niveis iniciais para verificar se o projeto ja possui base cientifica, conceito formulado e evidencias experimentais."
+        };
+      }
+
+      const current = estimated || consolidated;
+      let desc, next, badge;
+
+      if(current <= 2){
+        badge = "Fase inicial de pesquisa";
+        desc = "O projeto ainda esta em fase de fundamentacao, estruturacao conceitual e definicao das possibilidades tecnologicas.";
+        next = "O proximo passo e gerar evidencias experimentais e avancar para uma prova de conceito documentada.";
+      } else if(current <= 4){
+        badge = "Fase de prova de conceito e laboratorio";
+        desc = "A tecnologia ja apresenta base tecnica mais consistente e comeca a demonstrar viabilidade experimental ou laboratorial.";
+        next = "O proximo passo e validar a solucao em ambiente relevante, aproximando os testes do contexto real de uso.";
+      } else if(current <= 6){
+        badge = "Fase de validacao e demonstracao";
+        desc = "O projeto ja ultrapassou a fase estritamente laboratorial e comeca a demonstrar desempenho em condicoes mais proximas da aplicacao real.";
+        next = "O proximo passo e consolidar um prototipo funcional e demonstra-lo em ambiente operacional.";
+      } else if(current <= 8){
+        badge = "Fase pre-operacional";
+        desc = "A tecnologia ja possui alto grau de maturidade e caminha para implantacao, qualificacao e consolidacao operacional.";
+        next = "O proximo passo e comprovar desempenho em operacao real e preparar a transicao para adocao consistente.";
+      } else {
+        badge = "Fase operacional e de mercado";
+        desc = "A tecnologia ja demonstra uso real, maturidade elevada e potencial de geracao de valor pratico ou economico.";
+        next = "O proximo passo e ampliar escala, adocao, parcerias, protecao intelectual e estrategias de exploracao comercial.";
+      }
+
+      const scoreText = consolidated === estimated
+        ? `TRL ${consolidated}`
+        : `TRL ${consolidated}-${estimated}`;
+
+      return { score: scoreText, badge, badgeBg: "#e8f3f7", badgeColor: "#1f6f8b", desc, next };
+    }
+
+    // --- Toggle accordion (no re-render) ---
+    function toggleBody(id){
+      openLevels[id] = !openLevels[id];
+      const body = document.getElementById(`body-${id}`);
+      const chev = document.getElementById(`chev-${id}`);
+      const header = body.previousElementSibling;
+      body.classList.toggle('open', openLevels[id]);
+      chev.style.transform = openLevels[id] ? 'rotate(180deg)' : 'rotate(0deg)';
+      if(header) header.setAttribute('aria-expanded', openLevels[id]);
+    }
+
+    // --- Set answer (targeted update) ---
+    function setAnswer(levelId, qIndex, answerKey){
+      const prev = state[levelId][qIndex];
+      const newVal = ANSWERS[answerKey];
+      // Toggle off if same answer clicked
+      state[levelId][qIndex] = prev === newVal ? null : newVal;
+      saveToStorage();
+      updateAnswerButtons(levelId, qIndex);
+      updateScorePill(levelId);
+      updateProgressBar(levelId);
+      updateOverall();
+    }
+
+    function updateAnswerButtons(levelId, qIndex){
+      const item = trlData.find(d => d.id === levelId);
+      const btns = document.querySelectorAll(`[data-level="${levelId}"][data-qi="${qIndex}"]`);
+      btns.forEach(btn => {
+        const key = btn.dataset.answer;
+        const val = ANSWERS[key];
+        const active = state[levelId][qIndex] === val;
+        btn.classList.toggle('active', active);
+        if(active){
+          const opacity = key === 'parcial' ? 0.82 : key === 'nao' ? 0.68 : 1;
+          btn.style.background = item.color;
+          btn.style.opacity = opacity;
+        } else {
+          btn.style.background = '';
+          btn.style.opacity = '';
+        }
+        btn.setAttribute('aria-checked', active);
+      });
+    }
+
+    function updateScorePill(levelId){
+      const avg = getLevelAverage(levelId);
+      const pill = document.getElementById(`pill-${levelId}`);
+      if(pill) pill.textContent = `${avg.toFixed(1).replace('.',',')} / 1`;
+    }
+
+    function updateProgressBar(levelId){
+      const avg = getLevelAverage(levelId);
+      const pct = avg * 100;
+      const fill = document.getElementById(`pfill-${levelId}`);
+      const val = document.getElementById(`pval-${levelId}`);
+      if(fill) fill.style.width = `${pct}%`;
+      if(val) val.textContent = `${avg.toFixed(1).replace('.',',')} / 1`;
+    }
+
+    function updateOverall(){
+      const result = getResultText();
+      document.getElementById('trlScore').textContent = result.score;
+      const badge = document.getElementById('trlBadge');
+      badge.textContent = result.badge;
+      badge.style.background = result.badgeBg;
+      badge.style.color = result.badgeColor;
+      document.getElementById('trlDesc').textContent = result.desc;
+      document.getElementById('trlNextStep').textContent = result.next;
+    }
+
+    // --- Build DOM once ---
+    function buildLevels(){
+      const container = document.getElementById('trlLevels');
+
+      trlData.forEach((item) => {
+        const avg = getLevelAverage(item.id);
+        const isOpen = openLevels[item.id];
+
+        const card = document.createElement('section');
+        card.className = `trl-card ${item.theme}`;
+        card.innerHTML = `
+          <div class="trl-header" onclick="toggleBody('${item.id}')" role="button" tabindex="0"
+               aria-expanded="${isOpen}" aria-controls="body-${item.id}"
+               aria-label="${item.title}: ${item.subtitle}">
+            <div class="trl-title-wrap">
+              <div class="trl-icon" aria-hidden="true">${svgIcons[item.icon]}</div>
+              <div>
+                <h2 class="trl-title">${item.title}</h2>
+                <div class="trl-sub">${item.subtitle}</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="trl-score" id="pill-${item.id}">${avg.toFixed(1).replace('.',',')} / 1</div>
+              <div class="chevron-btn" aria-hidden="true">
+                <span class="chevron" id="chev-${item.id}" style="${isOpen ? 'transform:rotate(180deg);' : ''}">${svgIcons.chevronUp}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="trl-body ${isOpen ? 'open' : ''}" id="body-${item.id}" role="region" aria-label="Perguntas ${item.title}">
+            ${item.questions.map((q, qIndex) => {
+              const val = state[item.id][qIndex];
+              return `
+              <div class="question">
+                <div class="question-text" id="qt-${item.id}-${qIndex}">${q}</div>
+                <div class="answer-row" role="radiogroup" aria-labelledby="qt-${item.id}-${qIndex}">
+                  ${['sim','parcial','nao'].map(key => {
+                    const aVal = ANSWERS[key];
+                    const active = val === aVal;
+                    const label = key === 'sim' ? 'Sim' : key === 'parcial' ? 'Parcial' : 'Nao';
+                    const opacity = active ? (key === 'parcial' ? 0.82 : key === 'nao' ? 0.68 : 1) : 1;
+                    return `
+                    <button
+                      type="button"
+                      class="answer-btn${active ? ' active' : ''}"
+                      style="${active ? `background:${item.color};opacity:${opacity};` : ''}"
+                      data-level="${item.id}"
+                      data-qi="${qIndex}"
+                      data-answer="${key}"
+                      onclick="event.stopPropagation(); setAnswer('${item.id}', ${qIndex}, '${key}')"
+                      role="radio"
+                      aria-checked="${active}"
+                      aria-label="${label}"
+                    >${label}</button>`;
+                  }).join('')}
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        `;
+
+        // Keyboard support
+        const header = card.querySelector('.trl-header');
+        header.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            toggleBody(item.id);
+          }
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function buildProgressBars(){
+      const box = document.getElementById('progressBars');
+      box.innerHTML = trlData.map(item => {
+        const avg = getLevelAverage(item.id);
+        const pct = avg * 100;
+        return `
+          <div class="progress-line">
+            <div class="progress-top">
+              <span>${item.title}</span>
+              <span id="pval-${item.id}">${avg.toFixed(1).replace('.',',')} / 1</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuenow="${avg.toFixed(1)}" aria-valuemin="0" aria-valuemax="1" aria-label="${item.title}">
+              <div class="progress-fill" id="pfill-${item.id}" style="width:${pct}%; background:${item.color};"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- Inline result panel ---
+    function mostrarLeitura(){
+      const result = getResultText();
+      const panel = document.getElementById('result-panel');
+      document.getElementById('rp-score').textContent = result.score;
+      document.getElementById('rp-badge').textContent = result.badge;
+      document.getElementById('rp-desc').textContent = result.desc;
+      document.getElementById('rp-next').textContent = `Proximo passo: ${result.next}`;
+      panel.classList.add('open');
+      panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+
+    function limparRespostas(){
+      trlData.forEach(item => {
+        state[item.id] = new Array(item.questions.length).fill(null);
+      });
+      saveToStorage();
+
+      // Update all answer buttons
+      document.querySelectorAll('.answer-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = '';
+        btn.style.opacity = '';
+        btn.setAttribute('aria-checked', 'false');
+      });
+
+      // Update all pills and bars
+      trlData.forEach(item => {
+        updateScorePill(item.id);
+        updateProgressBar(item.id);
+      });
+
+      updateOverall();
+      document.getElementById('result-panel').classList.remove('open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- Init ---
+    initState();
+    loadFromStorage();
+    buildLevels();
+    buildProgressBars();
+    updateOverall();
+
+    document.getElementById('btn-leitura').addEventListener('click', mostrarLeitura);
+    document.getElementById('btn-limpar').addEventListener('click', limparRespostas);
+    document.getElementById('rp-close').addEventListener('click', () => {
+      document.getElementById('result-panel').classList.remove('open');
+    });
+  </script>
+</body>
+</html>
