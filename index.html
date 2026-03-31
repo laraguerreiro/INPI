@@ -570,6 +570,26 @@
     .site-footer a:hover{
       color:#2f9a85;
     }
+
+    .btn-print{
+      background:#1f6f8b;
+      color:#fff;
+      border:none;
+      padding:10px 20px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:600;
+      margin-top:10px;
+    }
+    .btn-print:hover{ background:#175a72; }
+
+    @media print{
+      body{ background:#fff; }
+      .hero, .actions, .btn-print, .site-footer, .reco-close, .mini-card{ display:none !important; }
+      .reco-panel{ display:block !important; border:none; box-shadow:none; }
+      .result-bar{ break-inside:avoid; }
+    }
   </style>
 </head>
 <body>
@@ -625,6 +645,7 @@
           <div class="actions">
             <button class="btn btn-primary" id="btn-reco" aria-controls="reco-panel">Ver recomendações</button>
             <button class="btn" id="btn-limpar">Limpar respostas</button>
+            <button class="btn-print" onclick="imprimirResultado()">Imprimir resultado</button>
           </div>
 
           <div class="reco-panel" id="reco-panel" role="region" aria-label="Recomendações">
@@ -983,6 +1004,43 @@
     document.getElementById('reco-close').addEventListener('click', () => {
       document.getElementById('reco-panel').classList.remove('open');
     });
+
+    function imprimirResultado(){
+      const starLabels = { 0: 'Não respondida', 1: '1 estrela', 2: '2 estrelas', 3: '3 estrelas', 4: '4 estrelas', 5: '5 estrelas' };
+      const total = getTotal();
+      const level = getLevel(total);
+      let html = '<h2 style="text-align:center;color:#1f6f8b;margin-bottom:24px;">Diagnóstico AIDA-PI — Maturidade em Propriedade Intelectual</h2>';
+
+      dims.forEach(d => {
+        html += '<div style="margin-bottom:18px;">';
+        html += '<h3 style="color:#24434a;margin:0 0 8px;">' + d.label + ' — ' + d.sub + '</h3>';
+        d.questions.forEach((q, i) => {
+          const val = scores[d.id][i];
+          const label = val === 0 ? '<em style="color:#999;">Não respondida</em>' : '<strong>' + starLabels[val] + '</strong>';
+          html += '<p style="margin:4px 0 4px 12px;font-size:14px;">' + q + ' — ' + label + '</p>';
+        });
+        const avg = scores[d.id].reduce((a,b) => a+b, 0) / d.questions.length;
+        html += '<p style="margin:6px 0 0 12px;font-size:13px;color:#536770;">Média da dimensão: <strong>' + avg.toFixed(1).replace('.',',') + ' / 5</strong></p>';
+        html += '</div>';
+      });
+
+      html += '<hr style="margin:24px 0;border:none;border-top:1px solid #ccc;">';
+      html += '<div style="text-align:center;">';
+      html += '<h3 style="color:#1f6f8b;">Pontuação geral: ' + total.toFixed(1).replace('.',',') + ' / 5,0</h3>';
+      html += '<p style="font-weight:600;color:#24434a;">' + level.text + '</p>';
+
+      // Include recommendation if available
+      const recoText = document.getElementById('reco-text').textContent;
+      if(recoText) html += '<p style="color:#42545b;">' + recoText + '</p>';
+
+      html += '</div>';
+      html += '<p style="text-align:center;margin-top:30px;font-size:11px;color:#999;">Gerado em ' + new Date().toLocaleDateString('pt-BR') + '</p>';
+
+      const win = window.open('', '_blank');
+      win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Resultado AIDA-PI</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#20303a;line-height:1.6;}@media print{body{margin:20px;}}</style></head><body>' + html + '</body></html>');
+      win.document.close();
+      win.print();
+    }
   </script>
 
   <footer class="site-footer" role="contentinfo">

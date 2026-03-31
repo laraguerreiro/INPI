@@ -495,6 +495,29 @@
       padding:12px;
     }
 
+    .result-panel .rp-pub{
+      font-size:14px;
+      color:#40535b;
+      line-height:1.5;
+      background:#faf8ed;
+      border:1px solid rgba(176,139,20,0.15);
+      border-radius:12px;
+      padding:12px;
+      margin-top:10px;
+    }
+
+    .result-panel .rp-alert{
+      font-size:14px;
+      font-weight:600;
+      color:#a32d2d;
+      background:#fcebeb;
+      border:1px solid rgba(163,45,45,0.15);
+      border-radius:12px;
+      padding:12px;
+      margin-top:10px;
+      text-align:center;
+    }
+
     .result-panel .rp-close{
       margin-top:12px;
       font-size:13px;
@@ -569,6 +592,26 @@
     .site-footer a:hover{
       color:#2f9a85;
     }
+
+    .btn-print{
+      background:#1f6f8b;
+      color:#fff;
+      border:none;
+      padding:10px 20px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:600;
+      margin-top:10px;
+    }
+    .btn-print:hover{ background:#175a72; }
+
+    @media print{
+      body{ background:#fff; }
+      .hero, .actions, .btn-print, .site-footer, .rp-close, .mini-card{ display:none !important; }
+      .result-panel{ display:block !important; border:none; box-shadow:none; }
+      .trl-card{ break-inside:avoid; }
+    }
   </style>
 </head>
 <body>
@@ -627,6 +670,7 @@
           <div class="actions">
             <button class="btn btn-primary" id="btn-leitura" aria-controls="result-panel">Ver leitura do resultado</button>
             <button class="btn btn-secondary" id="btn-limpar">Limpar respostas</button>
+            <button class="btn-print" onclick="imprimirResultado()">Imprimir resultado</button>
           </div>
 
           <div class="result-panel" id="result-panel" role="region" aria-label="Leitura do resultado">
@@ -634,6 +678,8 @@
             <div class="rp-badge" id="rp-badge"></div>
             <div class="rp-desc" id="rp-desc"></div>
             <div class="rp-next" id="rp-next"></div>
+            <div class="rp-pub" id="rp-pub"></div>
+            <div class="rp-alert">⚠ Jamais publique o invento, seu processo de produção ou seu uso antes de avaliar a possibilidade de proteção patentária.</div>
             <button class="rp-close" id="rp-close" aria-label="Fechar leitura">Fechar</button>
           </div>
         </section>
@@ -644,7 +690,6 @@
             <li><strong>TRL 1-3:</strong> fase de pesquisa, conceito e prova de conceito.</li>
             <li><strong>TRL 4-6:</strong> fase de validação e demonstração em ambiente relevante.</li>
             <li><strong>TRL 7-9:</strong> fase de prototipagem avançada, qualificação e operação real.</li>
-            <li><strong>TRL 10:</strong> inserção no mercado, adoção e exploração comercial.</li>
           </ul>
         </section>
       </div>
@@ -758,16 +803,6 @@
           "Há comprovação de desempenho em ambiente real, fora da fase de testes controlados?",
           "O projeto já demonstrou funcionalidade plena em sua aplicação prática?"
         ]
-      },
-      {
-        id: "trl10", level: 10,
-        title: "TRL 10", subtitle: "Mercado e exploração comercial",
-        icon: "trendUp", theme: "theme-10", color: "#c56b2c",
-        questions: [
-          "A solução já está inserida no mercado ou em uso institucional regular?",
-          "Há adoção por clientes, usuários ou parceiros em escala prática?",
-          "A tecnologia já gera valor econômico, impacto mensurável ou exploração comercial?"
-        ]
       }
     ];
 
@@ -853,35 +888,40 @@
       }
 
       const current = estimated || consolidated;
-      let desc, next, badge;
+      let desc, next, badge, pub;
 
       if(current <= 2){
         badge = "Fase inicial de pesquisa";
         desc = "O projeto ainda esta em fase de fundamentação, estruturação conceitual e definição das possibilidades tecnológicas.";
         next = "O próximo passo e gerar evidências experimentais e avançar para uma prova de conceito documentada.";
+        pub = "Faça buscas em bancos de patentes para avaliar o estado da técnica. Identifique as empresas que mais investem nesse campo científico e quantas patentes possuem.";
       } else if(current <= 4){
         badge = "Fase de prova de conceito e laboratório";
         desc = "A tecnologia já apresenta base técnica mais consistente e começa a demonstrar viabilidade experimental ou laboratorial.";
         next = "O próximo passo e validar a solução em ambiente relevante, aproximando os testes do contexto real de uso.";
+        pub = "Considere depositar pedido de patente antes de publicar resultados. Publique artigos científicos em periódicos ou congressos somente após garantir a proteção. Documente detalhadamente a prova de conceito.";
       } else if(current <= 6){
         badge = "Fase de validação e demonstração";
         desc = "O projeto já ultrapassou a fase estritamente laboratorial e começa a demonstrar desempenho em condições mais próximas da aplicação real.";
         next = "O próximo passo é consolidar um prototipo funcional e demonstrá-lo em ambiente operacional.";
+        pub = "Avalie o depósito de patente internacional (PCT) se houver interesse em mercados externos. Publique em periódicos aplicados e apresente em congressos do setor. Considere registrar software, se aplicável.";
       } else if(current <= 8){
         badge = "Fase pré-operacional";
         desc = "A tecnologia já possui alto grau de maturidade e caminha para implantação, qualificação e consolidação operacional.";
         next = "O próximo passo e comprovar desempenho em operação real e preparar a transição para adoção consistente.";
+        pub = "Revise sua estratégia de proteção: patentes, segredo industrial, marcas e desenho industrial. Publique estudos de caso demonstrando a aplicação prática. Avalie acordos de licenciamento e parcerias.";
       } else {
-        badge = "Fase operacional e de mercado";
-        next = "O proximo passo e ampliar escala, adocao, parcerias, proteção intelectual e estratégias de exploração comercial.";
-        desc = "A tecnologia já demonstra uso real, maturidade elevada e potencial de geração de valor prático ou econômico.";
+        badge = "Sistema comprovado em operação real";
+        desc = "A tecnologia já foi comprovada com sucesso em ambiente operacional real, atingindo o nível máximo de maturidade tecnológica (TRL 9).";
+        next = "O próximo passo é consolidar a operação, considerar estratégias de proteção intelectual, parcerias e exploração comercial.";
+        pub = "Publique resultados de desempenho em operação real. Fortaleça o portfólio de marcas e registros. Explore licenciamento, franquias e transferência de tecnologia.";
       }
 
       const scoreText = consolidated === estimated
         ? `TRL ${consolidated}`
         : `TRL ${consolidated}-${estimated}`;
 
-      return { score: scoreText, badge, badgeBg: "#e8f3f7", badgeColor: "#1f6f8b", desc, next };
+      return { score: scoreText, badge, badgeBg: "#e8f3f7", badgeColor: "#1f6f8b", desc, next, pub };
     }
 
     // --- Toggle accordion (no re-render) ---
@@ -1054,7 +1094,8 @@
       document.getElementById('rp-score').textContent = result.score;
       document.getElementById('rp-badge').textContent = result.badge;
       document.getElementById('rp-desc').textContent = result.desc;
-      document.getElementById('rp-next').textContent = `Proximo passo: ${result.next}`;
+      document.getElementById('rp-next').textContent = `Próximo passo: ${result.next}`;
+      document.getElementById('rp-pub').textContent = `Sugestões de publicação: ${result.pub}`;
       panel.classList.add('open');
       panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
@@ -1096,6 +1137,41 @@
     document.getElementById('rp-close').addEventListener('click', () => {
       document.getElementById('result-panel').classList.remove('open');
     });
+
+    function imprimirResultado(){
+      const answerLabels = { 1: 'Sim', 0.5: 'Parcial', 0: 'Não' };
+      const result = getResultText();
+      let html = '<h2 style="text-align:center;color:#1f6f8b;margin-bottom:24px;">Diagnóstico TRL — Nível de Maturidade Tecnológica</h2>';
+
+      trlData.forEach(item => {
+        html += '<div style="margin-bottom:18px;">';
+        html += '<h3 style="color:#24434a;margin:0 0 8px;">' + item.title + ' — ' + item.subtitle + '</h3>';
+        item.questions.forEach((q, i) => {
+          const val = state[item.id][i];
+          const label = val === null ? '<em style="color:#999;">Não respondida</em>' : '<strong>' + answerLabels[val] + '</strong>';
+          html += '<p style="margin:4px 0 4px 12px;font-size:14px;">' + q + ' — ' + label + '</p>';
+        });
+        const avg = getLevelAverage(item.id);
+        html += '<p style="margin:6px 0 0 12px;font-size:13px;color:#536770;">Média do nível: <strong>' + avg.toFixed(1).replace('.',',') + ' / 1</strong></p>';
+        html += '</div>';
+      });
+
+      html += '<hr style="margin:24px 0;border:none;border-top:1px solid #ccc;">';
+      html += '<div style="text-align:center;">';
+      html += '<h3 style="color:#1f6f8b;">' + result.score + '</h3>';
+      html += '<p style="font-weight:600;color:#24434a;">' + result.badge + '</p>';
+      html += '<p style="color:#42545b;">' + result.desc + '</p>';
+      html += '<p style="color:#536770;font-style:italic;">' + result.next + '</p>';
+      html += '<p style="color:#85700e;background:#faf8ed;padding:10px;border-radius:8px;margin-top:12px;"><strong>Sugestões de publicação:</strong> ' + result.pub + '</p>';
+      html += '<p style="color:#a32d2d;background:#fcebeb;padding:10px;border-radius:8px;margin-top:12px;font-weight:600;text-align:center;">⚠ Jamais publique o invento, seu processo de produção ou seu uso antes de avaliar a possibilidade de proteção patentária.</p>';
+      html += '</div>';
+      html += '<p style="text-align:center;margin-top:30px;font-size:11px;color:#999;">Gerado em ' + new Date().toLocaleDateString('pt-BR') + '</p>';
+
+      const win = window.open('', '_blank');
+      win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Resultado TRL</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#20303a;line-height:1.6;}@media print{body{margin:20px;}}</style></head><body>' + html + '</body></html>');
+      win.document.close();
+      win.print();
+    }
   </script>
 
   <footer class="site-footer" role="contentinfo">
