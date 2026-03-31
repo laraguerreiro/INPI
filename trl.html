@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TRL — Diagnostico de Maturidade Tecnologica</title>
+  <title>TRL — Diagnóstico de Maturidade Tecnológica</title>
   <style>
     :root{
       --bg-overlay: rgba(255,255,255,0.90);
@@ -561,17 +561,17 @@
         </nav>
       </div>
 
-      <h1>Diagnostico de maturidade tecnologica do projeto</h1>
+      <h1>Diagnóstico de maturidade tecnológica do projeto</h1>
       <p>
-        Esta ferramenta ajuda a identificar em que estagio de desenvolvimento tecnologico o projeto se encontra,
-        desde a observacao dos principios basicos ate a insercao no mercado. Responda cada pergunta com
-        <strong>Sim</strong>, <strong>Parcial</strong> ou <strong>Nao</strong>.
+        Esta ferramenta ajuda a identificar em que estágio de desenvolvimento tecnológico o projeto se encontra,
+        desde a observação dos princípios básicos até a inserção no mercado. Responda cada pergunta com
+        <strong>Sim</strong>, <strong>Parcial</strong> ou <strong>Não</strong>.
       </p>
 
       <div class="legend-box" role="list" aria-label="Legenda das respostas">
         <div class="legend-pill" role="listitem"><strong>Sim</strong> = requisito plenamente atendido</div>
-        <div class="legend-pill" role="listitem"><strong>Parcial</strong> = evidencias iniciais ou incompletas</div>
-        <div class="legend-pill" role="listitem"><strong>Nao</strong> = requisito ainda nao atendido</div>
+        <div class="legend-pill" role="listitem"><strong>Parcial</strong> = evidências iniciais ou incompletas</div>
+        <div class="legend-pill" role="listitem"><strong>Nao</strong> = requisito ainda não atendido</div>
       </div>
     </section>
 
@@ -580,8 +580,8 @@
 
       <div class="right">
         <section class="panel">
-          <h2>Progresso por nivel</h2>
-          <p>As barras mostram o grau de atendimento de cada nivel do TRL.</p>
+          <h2>Progresso por nível</h2>
+          <p>As barras mostram o grau de atendimento de cada nível do TRL.</p>
 
           <div id="progressBars" role="region" aria-label="Barras de progresso"></div>
 
@@ -589,15 +589,15 @@
             <div class="overall-grid">
               <div>
                 <div class="overall-score" id="trlScore" aria-live="polite">TRL 0</div>
-                <div class="overall-label">nivel identificado</div>
+                <div class="overall-label">nível identificado</div>
               </div>
               <div>
                 <div class="level-badge" id="trlBadge" aria-live="polite">Responda as perguntas</div>
                 <div class="level-desc" id="trlDesc">
-                  Preencha os niveis para identificar o estagio de maturidade tecnologica do projeto.
+                  Preencha os niveis para identificar o estágio de maturidade tecnológica do projeto.
                 </div>
                 <div class="next-step" id="trlNextStep">
-                  O proximo passo aparecera aqui conforme as respostas forem preenchidas.
+                  O próximo passo aparecerá aqui conforme as respostas forem preenchidas.
                 </div>
               </div>
             </div>
@@ -621,9 +621,9 @@
           <h3>Como interpretar</h3>
           <ul>
             <li><strong>TRL 1-3:</strong> fase de pesquisa, conceito e prova de conceito.</li>
-            <li><strong>TRL 4-6:</strong> fase de validacao e demonstracao em ambiente relevante.</li>
-            <li><strong>TRL 7-9:</strong> fase de prototipagem avancada, qualificacao e operacao real.</li>
-            <li><strong>TRL 10:</strong> insercao no mercado, adocao e exploracao comercial.</li>
+            <li><strong>TRL 4-6:</strong> fase de validação e demonstração em ambiente relevante.</li>
+            <li><strong>TRL 7-9:</strong> fase de prototipagem avançada, qualificação e operação real.</li>
+            <li><strong>TRL 10:</strong> inserção no mercado, adoção e exploração comercial.</li>
           </ul>
         </section>
       </div>
@@ -673,49 +673,49 @@
         title: "TRL 3", subtitle: "Prova de conceito experimental",
         icon: "flask", theme: "theme-3", color: "#7a63c7",
         questions: [
-          "Ja foram realizados experimentos iniciais para verificar a viabilidade da solucao?",
-          "Existe alguma evidencia experimental de que o conceito funciona?",
-          "A prova de conceito foi documentada de forma tecnica ou cientifica?"
+          "Já foram realizados experimentos iniciais para verificar a viabilidade da solucção?",
+          "Existe alguma evidência experimental de que o conceito funciona?",
+          "A prova de conceito foi documentada de forma técnica ou científica?"
         ]
       },
       {
         id: "trl4", level: 4,
-        title: "TRL 4", subtitle: "Validacao em laboratorio",
+        title: "TRL 4", subtitle: "Validação em laboratório",
         icon: "microscope", theme: "theme-4", color: "#1f6f8b",
         questions: [
-          "Os componentes principais da tecnologia ja foram testados em laboratorio?",
-          "Ha resultados que demonstrem funcionamento controlado da solucao em ambiente laboratorial?",
-          "Os testes laboratoriais permitiram validar a base tecnica da solucao?"
+          "Os componentes principais da tecnologia já foram testados em laboratório?",
+          "Há resultados que demonstrem funcionamento controlado da solução em ambiente laboratorial?",
+          "Os testes laboratoriais permitiram validar a base técnica da solução?"
         ]
       },
       {
         id: "trl5", level: 5,
-        title: "TRL 5", subtitle: "Validacao em ambiente relevante",
+        title: "TRL 5", subtitle: "Validação em ambiente relevante",
         icon: "beaker", theme: "theme-5", color: "#b08b14",
         questions: [
-          "A tecnologia ja foi testada em condicoes mais proximas do uso pretendido?",
-          "Ha validacao em ambiente relevante, ainda que em escala reduzida?",
-          "Os testes ja consideraram variaveis externas importantes para a aplicacao?"
+          "A tecnologia ja foi testada em condições mais próximas do uso pretendido?",
+          "Ha validação em ambiente relevante, ainda que em escala reduzida?",
+          "Os testes ja consideraram variáveis externas importantes para a aplicação?"
         ]
       },
       {
         id: "trl6", level: 6,
-        title: "TRL 6", subtitle: "Demonstracao em ambiente relevante",
+        title: "TRL 6", subtitle: "Demonstração em ambiente relevante",
         icon: "gear", theme: "theme-6", color: "#d36b4f",
         questions: [
-          "Existe um prototipo, piloto ou sistema parcial demonstrado em ambiente relevante?",
-          "A tecnologia ja foi testada de forma integrada, com seus principais elementos funcionando juntos?",
-          "Os resultados demonstram desempenho consistente em situacao proxima da aplicacao real?"
+          "Existe um protótipo, piloto ou sistema parcial demonstrado em ambiente relevante?",
+          "A tecnologia já foi testada de forma integrada, com seus principais elementos funcionando juntos?",
+          "Os resultados demonstram desempenho consistente em situação próxima da aplicação real?"
         ]
       },
       {
         id: "trl7", level: 7,
-        title: "TRL 7", subtitle: "Prototipo em ambiente operacional",
+        title: "TRL 7", subtitle: "Protótipo em ambiente operacional",
         icon: "factory", theme: "theme-7", color: "#2f9a85",
         questions: [
-          "Ja existe prototipo funcional operando em ambiente operacional ou de campo?",
-          "A solucao foi testada com usuarios, processos ou condicoes reais de operacao?",
-          "O projeto ja passou da fase de laboratorio e demonstra aplicabilidade em contexto operacional?"
+          "Já existe protótipo funcional operando em ambiente operacional ou de campo?",
+          "A solução foi testada com usuários, processos ou condições reais de operação?",
+          "O projeto já passou da fase de laboratório e demonstra aplicabilidade em contexto operacional?"
         ]
       },
       {
@@ -723,29 +723,29 @@
         title: "TRL 8", subtitle: "Sistema completo e qualificado",
         icon: "check", theme: "theme-8", color: "#3d6fb9",
         questions: [
-          "O sistema ou produto ja esta praticamente completo e qualificado?",
-          "A tecnologia ja passou por testes finais, validacoes tecnicas ou requisitos regulatorios relevantes?",
-          "O desenvolvimento tecnico esta suficientemente consolidado para implantacao?"
+          "O sistema ou produto já está praticamente completo e qualificado?",
+          "A tecnologia já passou por testes finais, validações técnicas ou requisitos regulatórios relevantes?",
+          "O desenvolvimento técnico esta suficientemente consolidado para implantação?"
         ]
       },
       {
         id: "trl9", level: 9,
-        title: "TRL 9", subtitle: "Sistema comprovado em operacao real",
+        title: "TRL 9", subtitle: "Sistema comprovado em operação real",
         icon: "globe", theme: "theme-9", color: "#3c9360",
         questions: [
-          "A tecnologia ja foi utilizada em operacao real ou contexto real de uso?",
-          "Ha comprovacao de desempenho em ambiente real, fora da fase de testes controlados?",
-          "O projeto ja demonstrou funcionalidade plena em sua aplicacao pratica?"
+          "A tecnologia já foi utilizada em operação real ou contexto real de uso?",
+          "Há comprovação de desempenho em ambiente real, fora da fase de testes controlados?",
+          "O projeto já demonstrou funcionalidade plena em sua aplicação prática?"
         ]
       },
       {
         id: "trl10", level: 10,
-        title: "TRL 10", subtitle: "Mercado e exploracao comercial",
+        title: "TRL 10", subtitle: "Mercado e exploração comercial",
         icon: "trendUp", theme: "theme-10", color: "#c56b2c",
         questions: [
-          "A solucao ja esta inserida no mercado ou em uso institucional regular?",
-          "Ha adocao por clientes, usuarios ou parceiros em escala pratica?",
-          "A tecnologia ja gera valor economico, impacto mensuravel ou exploracao comercial?"
+          "A solução já está inserida no mercado ou em uso institucional regular?",
+          "Há adoção por clientes, usuários ou parceiros em escala prática?",
+          "A tecnologia já gera valor econômico, impacto mensurável ou exploração comercial?"
         ]
       }
     ];
@@ -826,8 +826,8 @@
           score: "TRL 0",
           badge: "Responda as perguntas",
           badgeBg: "#f4f7f8", badgeColor: "#536770",
-          desc: "Preencha os niveis para identificar o estagio de maturidade tecnologica do projeto.",
-          next: "Comece avaliando os niveis iniciais para verificar se o projeto ja possui base cientifica, conceito formulado e evidencias experimentais."
+          desc: "Preencha os niveis para identificar o estágio de maturidade tecnológica do projeto.",
+          next: "Comece avaliando os niveis iniciais para verificar se o projeto já possui base científica, conceito formulado e evidências experimentais."
         };
       }
 
@@ -836,24 +836,24 @@
 
       if(current <= 2){
         badge = "Fase inicial de pesquisa";
-        desc = "O projeto ainda esta em fase de fundamentacao, estruturacao conceitual e definicao das possibilidades tecnologicas.";
-        next = "O proximo passo e gerar evidencias experimentais e avancar para uma prova de conceito documentada.";
+        desc = "O projeto ainda esta em fase de fundamentação, estruturação conceitual e definição das possibilidades tecnológicas.";
+        next = "O próximo passo e gerar evidências experimentais e avançar para uma prova de conceito documentada.";
       } else if(current <= 4){
-        badge = "Fase de prova de conceito e laboratorio";
-        desc = "A tecnologia ja apresenta base tecnica mais consistente e comeca a demonstrar viabilidade experimental ou laboratorial.";
-        next = "O proximo passo e validar a solucao em ambiente relevante, aproximando os testes do contexto real de uso.";
+        badge = "Fase de prova de conceito e laboratório";
+        desc = "A tecnologia já apresenta base técnica mais consistente e começa a demonstrar viabilidade experimental ou laboratorial.";
+        next = "O próximo passo e validar a solução em ambiente relevante, aproximando os testes do contexto real de uso.";
       } else if(current <= 6){
-        badge = "Fase de validacao e demonstracao";
-        desc = "O projeto ja ultrapassou a fase estritamente laboratorial e comeca a demonstrar desempenho em condicoes mais proximas da aplicacao real.";
-        next = "O proximo passo e consolidar um prototipo funcional e demonstra-lo em ambiente operacional.";
+        badge = "Fase de validação e demonstração";
+        desc = "O projeto já ultrapassou a fase estritamente laboratorial e começa a demonstrar desempenho em condições mais próximas da aplicação real.";
+        next = "O próximo passo é consolidar um prototipo funcional e demonstrá-lo em ambiente operacional.";
       } else if(current <= 8){
-        badge = "Fase pre-operacional";
-        desc = "A tecnologia ja possui alto grau de maturidade e caminha para implantacao, qualificacao e consolidacao operacional.";
-        next = "O proximo passo e comprovar desempenho em operacao real e preparar a transicao para adocao consistente.";
+        badge = "Fase pré-operacional";
+        desc = "A tecnologia já possui alto grau de maturidade e caminha para implantação, qualificação e consolidação operacional.";
+        next = "O próximo passo e comprovar desempenho em operação real e preparar a transição para adoção consistente.";
       } else {
         badge = "Fase operacional e de mercado";
-        desc = "A tecnologia ja demonstra uso real, maturidade elevada e potencial de geracao de valor pratico ou economico.";
-        next = "O proximo passo e ampliar escala, adocao, parcerias, protecao intelectual e estrategias de exploracao comercial.";
+        next = "O proximo passo e ampliar escala, adocao, parcerias, proteção intelectual e estratégias de exploração comercial.";
+        desc = "A tecnologia já demonstra uso real, maturidade elevada e potencial de geração de valor prático ou econômico.";
       }
 
       const scoreText = consolidated === estimated
