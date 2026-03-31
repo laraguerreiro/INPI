@@ -549,6 +549,27 @@
         font-size:13px;
       }
     }
+
+    .site-footer{
+      max-width:1220px;
+      margin:40px auto 0;
+      padding:24px 20px 32px;
+      border-top:1px solid rgba(32,48,58,0.10);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.65;
+      text-align:center;
+    }
+
+    .site-footer a{
+      color:var(--accent);
+      text-decoration:underline;
+      word-break:break-all;
+    }
+
+    .site-footer a:hover{
+      color:#2f9a85;
+    }
   </style>
 </head>
 <body>
@@ -963,5 +984,14 @@
       document.getElementById('reco-panel').classList.remove('open');
     });
   </script>
+
+  <footer class="site-footer" role="contentinfo">
+    A metodologia aqui empregada é baseada nos protocolos AIDA (Atenção, Interesse, Desejo, Ação), originário do marketing, e TRL (<em>Technology Readiness Level</em>), este último criado pela NASA, disponível em
+    <a href="https://www.nasa.gov/wp-content/uploads/2017/12/458490main_trl_definitions.pdf"
+       target="_blank" rel="noopener noreferrer">nasa.gov/trl_definitions.pdf</a>.
+    O conteúdo e estrutura são de autoria da jornalista e analista de propriedade industrial
+    <a href="https://www.linkedin.com/in/larapires-pi" target="_blank" rel="noopener noreferrer">Lara Guerreiro Pires</a>, MSc.
+    A ferramenta é oferecida gratuitamente. Os diagnósticos são ilustrativos e visam promover a literacia na área. Não há vínculo com o governo brasileiro ou qualquer órgão público. As informações inseridas nesta plataforma não são armazenadas. A interpretação e o uso dos resultados obtidos são de exclusiva responsabilidade do usuário. Os resultados gerados têm caráter orientativo e não substituem a consulta a um profissional especializado.
+  </footer>
 </body>
 </html>
