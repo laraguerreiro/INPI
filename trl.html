@@ -548,6 +548,28 @@
       .answer-btn{ min-width:84px; }
       .panel{ padding:18px; }
     }
+ .site-footer{
+      max-width:1220px;
+      margin:40px auto 0;
+      padding:24px 20px 32px;
+      border-top:1px solid rgba(32,48,58,0.10);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.65;
+      text-align:center;
+    }
+
+    .site-footer a{
+      color:var(--accent);
+      text-decoration:underline;
+      word-break:break-all;
+    }
+
+    .site-footer a:hover{
+      color:#2f9a85;
+
+
+    
   </style>
 </head>
 <body>
@@ -650,7 +672,7 @@
     const trlData = [
       {
         id: "trl1", level: 1,
-        title: "TRL 1", subtitle: "Princípios baáicos observados",
+        title: "TRL 1", subtitle: "Princípios báicos observados",
         icon: "lightbulb", theme: "theme-1", color: "#4b8b3b",
         questions: [
           "Os princípios científicos ou técnicos relacionados a solução já foram identificados?",
@@ -1075,6 +1097,18 @@
     document.getElementById('rp-close').addEventListener('click', () => {
       document.getElementById('result-panel').classList.remove('open');
     });
+
+    <footer class="site-footer" role="contentinfo">
+  Use a pagina como uma ferramenta alternativa na avaliacao de maturidade tecnologica.
+  A metodologia aqui empregada e baseada nos protocolos AIDA (Atencao, Interesse, Desejo, Acao),
+  originario do marketing, e tambem do protocolo criado pela NASA, o
+  <em>Technology Readiness Level</em>, disponivel em
+  <a href="https://www.nasa.gov/wp-content/uploads/2017/12/458490main_trl_definitions.pdf"
+     target="_blank" rel="noopener noreferrer">nasa.gov/trl_definitions.pdf</a>.
+  O conteudo e estrutura das perguntas foi criado pela Jornalista e Analista de Propriedade Industrial,
+  Msc Lara Guerreiro Pires.
+</footer>
+    
   </script>
 </body>
 </html>
