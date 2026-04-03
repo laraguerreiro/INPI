@@ -1,0 +1,4 @@
+.DS_Store
+.context/
+db-jornais/uploads/
+db-jornais/*.db

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Matérias{% endblock %}
+{% block content %}
+<h1>Matérias</h1>
+
+<div class="card">
+  <form class="filters" method="GET">
+    <div class="form-group">
+      <label>Jornal</label>
+      <select name="jornal">
+        <option value="">Todos</option>
+        <option value="Público" {% if filtro_jornal == 'Público' %}selected{% endif %}>Público</option>
+        <option value="Folha de S. Paulo" {% if filtro_jornal == 'Folha de S. Paulo' %}selected{% endif %}>Folha de S. Paulo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Ano</label>
+      <select name="ano">
+        <option value="">Todos</option>
+        {% for a in anos %}<option value="{{ a.ano }}" {% if filtro_ano == a.ano|string %}selected{% endif %}>{{ a.ano }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Termo</label>
+      <input type="text" name="termo" value="{{ filtro_termo }}" placeholder="Buscar termo...">
+    </div>
+    <button class="btn" type="submit">Filtrar</button>
+  </form>
+</div>
+
+<div class="card">
+  {% if materias %}
+  <p class="text-muted" style="margin-bottom:12px"><strong>{{ materias|length }}</strong> matéria(s)</p>
+  <table>
+    <thead><tr><th>ID</th><th>Jornal</th><th>País</th><th>Data</th><th>Pág.</th><th>Seção</th><th>Autor</th><th>Tipo</th><th></th></tr></thead>
+    <tbody>
+    {% for m in materias %}
+    <tr>
+      <td>{{ m.id }}</td>
+      <td>{{ m.jornal or '—' }}</td>
+      <td>{{ m.pais or '—' }}</td>
+      <td>{{ m.data_edicao or '—' }}</td>
+      <td>{{ m.pagina_jornal or m.paginas_pdf }}</td>
+      <td>{{ m.secao or '—' }}</td>
+      <td>{{ m.autor or '—' }}</td>
+      <td>{{ m.tipo or '—' }}</td>
+      <td>
+        <a href="/materia/{{ m.id }}" class="btn btn-sm">Ver/Editar</a>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">Nenhuma matéria encontrada.</p>
+  {% endif %}
+</div>
+{% endblock %}

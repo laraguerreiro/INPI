@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Resultados: {{ termo }}{% endblock %}
+{% block content %}
+<h1>Resultados para "{{ termo }}"</h1>
+<p class="text-muted" style="margin-bottom:16px"><strong>{{ materias|length }}</strong> matéria(s) encontrada(s)</p>
+
+{% if materias %}
+{% for m in materias %}
+<div class="card">
+  <div class="form-row" style="margin-bottom:8px">
+    <div class="form-group"><span class="text-muted">Arquivo:</span> <strong>{{ m.arquivo }}</strong></div>
+    <div class="form-group"><span class="text-muted">Jornal:</span> <strong>{{ m.jornal or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Data:</span> <strong>{{ m.data_edicao or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Página:</span> <strong>{{ m.pagina_jornal or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Seção:</span> <strong>{{ m.secao or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Autor:</span> <strong>{{ m.autor or '—' }}</strong></div>
+  </div>
+  <div class="text-excerpt">{{ m.texto_completo[:800] if m.texto_completo else '(sem texto)' }}</div>
+  <div style="margin-top:8px"><a href="/materia/{{ m.id }}" class="btn btn-sm">Ver / Classificar</a></div>
+</div>
+{% endfor %}
+{% else %}
+<div class="empty">Nenhum resultado encontrado.</div>
+{% endif %}
+
+<a href="/busca" class="btn btn-secondary" style="margin-top:12px">Nova busca</a>
+{% endblock %}

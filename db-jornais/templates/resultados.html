@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Resultados da importação{% endblock %}
+{% block content %}
+<h1>Resultados da importação</h1>
+<p style="margin-bottom:16px">Termos buscados: {% for t in terms %}<span class="tag tag-blue">{{ t }}</span> {% endfor %}</p>
+
+{% if results %}
+<p class="text-muted" style="margin-bottom:16px"><strong>{{ results|length }}</strong> página(s) encontrada(s) e importada(s) para o banco.</p>
+
+{% for r in results %}
+<div class="card">
+  <div class="form-row" style="margin-bottom:8px">
+    <div class="form-group"><span class="text-muted">Arquivo:</span> <strong>{{ r.arquivo }}</strong></div>
+    <div class="form-group"><span class="text-muted">Página(s) PDF:</span> <strong>{{ r.pagina }}</strong>
+      {% if r.multi_page %}<span class="tag tag-green">{{ r.page_count }} páginas</span>{% endif %}
+    </div>
+    <div class="form-group"><span class="text-muted">Página jornal:</span> <strong>{{ r.pagina_jornal or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Seção:</span> <strong>{{ r.secao or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Autor:</span> <strong>{{ r.autor or '—' }}</strong></div>
+  </div>
+  <div>Termos: {% for t in r.termos %}<span class="tag tag-yellow">{{ t }}</span> {% endfor %}</div>
+  <div class="text-excerpt">{{ r.trecho }}</div>
+</div>
+{% endfor %}
+
+{% else %}
+<div class="empty">Nenhum resultado encontrado para os termos informados.</div>
+{% endif %}
+
+<div style="margin-top:16px">
+  <a href="/importar" class="btn btn-secondary">Importar mais</a>
+  <a href="/materias" class="btn">Ver todas as matérias</a>
+</div>
+{% endblock %}

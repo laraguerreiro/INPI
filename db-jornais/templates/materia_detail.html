@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}Matéria #{{ m.id }}{% endblock %}
+{% block content %}
+<h1>Matéria #{{ m.id }}</h1>
+
+<!-- Metadados -->
+<div class="card">
+  <div class="form-row">
+    <div class="form-group"><span class="text-muted">Arquivo:</span> <strong>{{ m.arquivo }}</strong></div>
+    <div class="form-group"><span class="text-muted">Jornal:</span> <strong>{{ m.jornal or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">País:</span> <strong>{{ m.pais or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Data:</span> <strong>{{ m.data_edicao or '—' }}</strong></div>
+    <div class="form-group"><span class="text-muted">Página PDF:</span> <strong>{{ m.paginas_pdf }}</strong></div>
+    <div class="form-group"><span class="text-muted">Página jornal:</span> <strong>{{ m.pagina_jornal or '—' }}</strong></div>
+  </div>
+</div>
+
+<!-- Layout lado a lado: Imagem + Classificação -->
+<div class="side-by-side">
+
+  <!-- Coluna esquerda: Imagem da página -->
+  <div class="col-image">
+    <div class="card" style="position:sticky;top:12px">
+      <h2>Página(s) do jornal</h2>
+      {% for pg in m.paginas_pdf.split(', ') %}
+      <div style="margin-top:12px;text-align:center">
+        <p class="text-muted" style="margin-bottom:6px">Página {{ pg }} do PDF</p>
+        <a href="/pdf-page/{{ m.arquivo }}/{{ pg }}" target="_blank" title="Abrir imagem em nova aba">
+          <img src="/pdf-page/{{ m.arquivo }}/{{ pg }}" alt="Página {{ pg }}"
+               style="width:100%;border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.1);cursor:pointer">
+        </a>
+      </div>
+      {% endfor %}
+      <details style="margin-top:12px">
+        <summary style="cursor:pointer;font-weight:600;color:var(--accent)">Ver texto extraído</summary>
+        <div class="text-excerpt" style="max-height:300px;margin-top:8px">{{ m.texto_completo or '(sem texto)' }}</div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Coluna direita: Classificação -->
+  <div class="col-class">
+
+    <!-- Classificação editorial -->
+    <div class="card">
+      <h2>Classificação editorial</h2>
+      <form method="POST" action="/materia/{{ m.id }}/editar">
+        <div class="form-group">
+          <label>Título da matéria</label>
+          <input type="text" name="titulo" value="{{ m.titulo or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Autor</label>
+          <input type="text" name="autor" value="{{ m.autor or '' }}">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Seção</label>
+            <input type="text" name="secao" value="{{ m.secao or '' }}">
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select name="tipo">
+              <option value="">—</option>
+              <option value="Editorial" {% if m.tipo == 'Editorial' %}selected{% endif %}>Editorial</option>
+              <option value="Notícia" {% if m.tipo == 'Notícia' %}selected{% endif %}>Notícia</option>
+              <option value="Reportagem" {% if m.tipo == 'Reportagem' %}selected{% endif %}>Reportagem</option>
+              <option value="Inválido" {% if m.tipo == 'Inválido' %}selected{% endif %}>Inválido</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 style="margin-top:14px">Abordagem e enquadramento</h3>
+        <div class="form-group">
+          <label>Abordagem</label>
+          <select name="abordagem">
+            <option value="">—</option>
+            <option value="Economia e negócios" {% if abordagem and abordagem.abordagem == 'Economia e negócios' %}selected{% endif %}>Economia e negócios</option>
+            <option value="Políticas e regulamentos" {% if abordagem and abordagem.abordagem == 'Políticas e regulamentos' %}selected{% endif %}>Políticas e regulamentos</option>
+            <option value="Questões éticas e morais" {% if abordagem and abordagem.abordagem == 'Questões éticas e morais' %}selected{% endif %}>Questões éticas e morais</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Gancho</label>
+            <select name="gancho">
+              <option value="">—</option>
+              <option value="Academia" {% if abordagem and abordagem.gancho == 'Academia' %}selected{% endif %}>Academia</option>
+              <option value="Indústria" {% if abordagem and abordagem.gancho == 'Indústria' %}selected{% endif %}>Indústria</option>
+              <option value="Governo" {% if abordagem and abordagem.gancho == 'Governo' %}selected{% endif %}>Governo</option>
+              <option value="Sociedade civil" {% if abordagem and abordagem.gancho == 'Sociedade civil' %}selected{% endif %}>Sociedade civil</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Sentimento</label>
+            <select name="sentimento">
+              <option value="">—</option>
+              <option value="Positivo" {% if abordagem and abordagem.sentimento == 'Positivo' %}selected{% endif %}>Positivo</option>
+              <option value="Neutro" {% if abordagem and abordagem.sentimento == 'Neutro' %}selected{% endif %}>Neutro</option>
+              <option value="Negativo" {% if abordagem and abordagem.sentimento == 'Negativo' %}selected{% endif %}>Negativo</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 style="margin-top:14px">Propriedade intelectual</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Menciona PI?</label>
+            <select name="menciona_pi">
+              <option value="nao" {% if not pi or pi.menciona_pi == 'nao' %}selected{% endif %}>Não</option>
+              <option value="sim" {% if pi and pi.menciona_pi == 'sim' %}selected{% endif %}>Sim</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de PI</label>
+            <select name="tipo_pi">
+              <option value="">—</option>
+              <option value="Patente" {% if pi and pi.tipo_pi == 'Patente' %}selected{% endif %}>Patente</option>
+              <option value="Marca" {% if pi and pi.tipo_pi == 'Marca' %}selected{% endif %}>Marca</option>
+              <option value="Direito autoral" {% if pi and pi.tipo_pi == 'Direito autoral' %}selected{% endif %}>Direito autoral</option>
+              <option value="Desenho industrial" {% if pi and pi.tipo_pi == 'Desenho industrial' %}selected{% endif %}>Desenho industrial</option>
+              <option value="Segredo industrial" {% if pi and pi.tipo_pi == 'Segredo industrial' %}selected{% endif %}>Segredo industrial</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Titular mencionado</label>
+          <input type="text" name="titular_mencionado" value="{{ pi.titular_mencionado if pi else '' }}">
+        </div>
+
+        <button type="submit" class="btn" style="margin-top:12px;width:100%">Salvar classificação</button>
+      </form>
+    </div>
+
+    <!-- Fontes -->
+    <div class="card">
+      <h2>Fontes</h2>
+      {% if fontes %}
+      <table>
+        <thead><tr><th>Nome</th><th>Setor</th><th>Tipo</th><th></th></tr></thead>
+        <tbody>
+        {% for f in fontes %}
+        <tr>
+          <td>{{ f.nome or '—' }}</td>
+          <td>{{ f.setor or '—' }}</td>
+          <td>{{ f.tipo_fonte or '—' }}</td>
+          <td>
+            <form method="POST" action="/fonte/{{ f.id }}/excluir" style="display:inline">
+              <button class="btn btn-sm btn-danger" type="submit">X</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+      <details style="margin-top:8px">
+        <summary style="cursor:pointer;font-weight:600;color:var(--accent);font-size:0.9rem">Adicionar fonte</summary>
+        <form method="POST" action="/materia/{{ m.id }}/fonte" style="margin-top:8px">
+          <div class="form-group"><label>Nome</label><input type="text" name="nome"></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Setor</label>
+              <select name="setor">
+                <option value="">—</option>
+                <option value="Indústria">Indústria</option>
+                <option value="Sociedade civil">Sociedade civil</option>
+                <option value="Governo">Governo</option>
+                <option value="Academia">Academia</option>
+                <option value="Documentos">Documentos</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tipo</label>
+              <select name="tipo_fonte">
+                <option value="">—</option>
+                <option value="Executivos">Executivos</option>
+                <option value="Pesquisadores">Pesquisadores</option>
+                <option value="Governantes">Governantes</option>
+                <option value="Outros políticos">Outros políticos</option>
+                <option value="Servidores públicos">Servidores públicos</option>
+                <option value="Administradores">Administradores</option>
+                <option value="Colaboradores">Colaboradores</option>
+                <option value="Porta-voz">Porta-voz</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Documento</label>
+            <select name="tipo_documento">
+              <option value="">—</option>
+              <option value="Press release">Press release</option>
+              <option value="Documentos oficiais">Documentos oficiais</option>
+              <option value="Discursos">Discursos</option>
+              <option value="Outras narrativas jornalísticas">Outras narrativas jornalísticas</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-sm" style="margin-top:4px">Adicionar</button>
+        </form>
+      </details>
+    </div>
+
+    <!-- Técnicas de IA -->
+    <div class="card">
+      <h2>Técnicas de IA</h2>
+      {% if tecnicas %}
+      <div style="margin-bottom:8px">
+        {% for t in tecnicas %}<span class="tag tag-blue">{{ t.tecnica }}</span> {% endfor %}
+      </div>
+      {% endif %}
+      <form method="POST" action="/materia/{{ m.id }}/tecnica" style="display:flex;gap:8px;align-items:end">
+        <div class="form-group" style="flex:1;margin-bottom:0">
+          <select name="tecnica" style="font-size:0.85rem">
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="Redes Neurais">Redes Neurais</option>
+            <option value="Visão computacional">Visão computacional</option>
+            <option value="Processamento de linguagem natural">PLN</option>
+            <option value="Reconhecimento facial">Reconhecimento facial</option>
+            <option value="Processamento de voz">Processamento de voz</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-sm">+</button>
+      </form>
+    </div>
+
+    <!-- Palavras-chave -->
+    <div class="card">
+      <h2>Palavras-chave</h2>
+      {% if palavras %}
+      <div>{% for p in palavras %}<span class="tag tag-yellow">{{ p.termo }}</span> {% endfor %}</div>
+      {% else %}
+      <p class="text-muted">Nenhuma palavra-chave.</p>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:8px;margin-bottom:80px">
+      <a href="/materias" class="btn btn-secondary">Voltar</a>
+      <form method="POST" action="/materia/{{ m.id }}/excluir">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Excluir esta matéria?')">Excluir matéria</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- Botão flutuante Salvar -->
+<button id="floatSave" onclick="document.getElementById('mainForm').submit()" style="
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  padding:14px 28px;
+  background:#27ae60;
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(39,174,96,0.4);
+  z-index:1000;
+  transition:all 0.2s;
+">Salve seu trabalho</button>
+
+<div id="saveMsg" style="
+  display:none;
+  position:fixed;
+  bottom:80px;
+  right:24px;
+  background:#27ae60;
+  color:#fff;
+  padding:10px 20px;
+  border-radius:8px;
+  font-weight:600;
+  font-size:0.9rem;
+  z-index:1001;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+">Salvo com sucesso!</div>
+
+<style>
+.container{max-width:1400px!important}
+.side-by-side{display:flex;gap:24px;align-items:flex-start}
+.col-image{flex:3;min-width:0}
+.col-class{flex:2;min-width:0}
+.col-image img{transition:transform 0.3s ease}
+.col-image img.zoomed{transform:scale(2);transform-origin:top center;position:relative;z-index:50;cursor:zoom-out}
+[id="floatSave"]:hover{background:#219a52;box-shadow:0 8px 24px rgba(39,174,96,0.5);transform:translateY(-2px)}
+[id="floatSave"]:active{transform:translateY(0)}
+@media print{ [id="floatSave"], [id="saveMsg"]{display:none!important} }
+@media(max-width:900px){
+  .side-by-side{flex-direction:column}
+}
+</style>
+
+<script>
+var formAction = "/materia/{{ m.id }}/editar";
+document.querySelector('form[action="' + formAction + '"]').id = 'mainForm';
+document.getElementById('mainForm').addEventListener('submit', function(){
+  var msg = document.getElementById('saveMsg');
+  msg.style.display = 'block';
+  setTimeout(function(){ msg.style.display = 'none'; }, 2000);
+});
+</script>
+{% endblock %}
