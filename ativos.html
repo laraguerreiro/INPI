@@ -627,16 +627,17 @@
     document.querySelectorAll('.item').forEach((item) => {
       const label = item.getAttribute('data-label');
       if (item.classList.contains('done')) {
-        done.push(label);
+        done.push('✓ ' + label);
       } else {
-        todo.push(label);
+        todo.push('○ ' + label);
       }
     });
     
-    // Configuração
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 12;
+    const margin = 15;
+    const col1X = margin;
+    const col2X = pageWidth / 2 + 2;
     const colWidth = (pageWidth - margin * 3) / 2;
     
     let yPos = margin;
@@ -650,68 +651,96 @@
     // Data
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Relatório gerado em ${new Date().toLocaleDateString('pt-BR')}`, pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
+    doc.text(`Relatório de ${new Date().toLocaleDateString('pt-BR')}`, pageWidth / 2, yPos, { align: 'center' });
+    yPos += 10;
     
-    // Coluna 1: Ativos que você tem
-    doc.setFontSize(12);
-    doc.setTextColor(29, 158, 117);
-    doc.rect(margin, yPos - 4, colWidth, 6, 'F');
+    // Headers das colunas
+    doc.setFontSize(11);
     doc.setTextColor(255, 255, 255);
-    doc.text('✓ Ativos que você possui', margin + colWidth/2, yPos + 1, { align: 'center' });
+    
+    // Coluna 1 - Header
+    doc.setFillColor(29, 158, 117);
+    doc.rect(col1X, yPos - 4, colWidth - 2, 6, 'F');
+    doc.text('Ativos que você possui', col1X + colWidth/2 - 2, yPos + 1, { align: 'center' });
+    
+    // Coluna 2 - Header
+    doc.rect(col2X, yPos - 4, colWidth - 2, 6, 'F');
+    doc.text('Ativos que faltam', col2X + colWidth/2 - 2, yPos + 1, { align: 'center' });
+    
     yPos += 8;
     
-    // Coluna 2: Ativos que faltam
-    doc.setTextColor(29, 158, 117);
-    doc.rect(margin * 2 + colWidth, yPos - 12, colWidth, 6, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.text('○ Ativos que faltam', margin * 2 + colWidth + colWidth/2, yPos - 11, { align: 'center' });
+    // Reset texto
+    doc.setFontSize(9);
+    doc.setTextColor(50, 50, 50);
     
-    // Reset para corpo
-    yPos -= 4;
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-    
-    let yPos1 = yPos;
-    let yPos2 = yPos;
-    
-    const maxLines = Math.max(done.length, todo.length);
+    let maxLines = Math.max(done.length, todo.length);
+    let currentPage = 1;
     
     for (let i = 0; i < maxLines; i++) {
-      // Coluna 1
+      // Verifica se precisa de nova página
+      if (yPos > pageHeight - margin - 10) {
+        doc.addPage();
+        yPos = margin;
+        currentPage++;
+        
+        // Re-desenha headers
+        doc.setFontSize(11);
+        doc.setTextColor(255, 255, 255);
+        doc.setFillColor(29, 158, 117);
+        doc.rect(col1X, yPos - 4, colWidth - 2, 6, 'F');
+        doc.text('Ativos que você possui', col1X + colWidth/2 - 2, yPos + 1, { align: 'center' });
+        doc.rect(col2X, yPos - 4, colWidth - 2, 6, 'F');
+        doc.text('Ativos que faltam', col2X + colWidth/2 - 2, yPos + 1, { align: 'center' });
+        yPos += 8;
+        doc.setFontSize(9);
+        doc.setTextColor(50, 50, 50);
+      }
+      
+      // Coluna 1 - Ativos que tem
       if (i < done.length) {
         const lines = doc.splitTextToSize(done[i], colWidth - 4);
         lines.forEach(line => {
-          if (yPos1 > pageHeight - margin) {
+          if (yPos > pageHeight - margin - 5) {
             doc.addPage();
-            yPos1 = margin;
+            yPos = margin;
+            currentPage++;
           }
-          doc.text(line, margin + 2, yPos1);
-          yPos1 += 5;
+          doc.text(line, col1X + 2, yPos);
+          yPos += 5;
         });
       }
       
-      // Coluna 2
+      // Retorna à altura correta para coluna 2
       if (i < todo.length) {
+        let tempY = margin + 8 + (i * 5);
+        for (let j = 0; j < i; j++) {
+          const lines = doc.splitTextToSize(done[j], colWidth - 4);
+          tempY += (lines.length - 1) * 5;
+        }
+        
+        // Coluna 2 - Ativos que faltam
         const lines = doc.splitTextToSize(todo[i], colWidth - 4);
+        let col2Y = margin + 8 + (i * 5);
+        
         lines.forEach(line => {
-          if (yPos2 > pageHeight - margin) {
-            doc.addPage();
-            yPos2 = margin;
+          if (col2Y > pageHeight - margin - 5) {
+            col2Y = margin + 8;
           }
-          doc.text(line, margin * 2 + colWidth + 2, yPos2);
-          yPos2 += 5;
+          doc.text(line, col2X + 2, col2Y);
+          col2Y += 5;
         });
       }
+      
+      yPos += 5;
     }
     
-    // Rodapé
+    // Rodapé com número de páginas
     const pageCount = doc.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
-      doc.text(`Página ${i} de ${pageCount}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
+      doc.text(`Página ${i}`, pageWidth / 2, pageHeight - 8, { align: 'center' });
     }
     
     doc.save('inventario-ativos.pdf');
