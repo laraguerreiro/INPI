@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checklist — Inventário de Ativos do Empreendimento</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -102,6 +103,15 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .prog-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 300px;
   }
   .prog-numbers { white-space: nowrap; }
   .prog-big { font-size: 28px; font-weight: 500; color: var(--green); line-height: 1; }
@@ -110,7 +120,13 @@
   .prog-bar-bg { height: 6px; background: var(--border); border-radius: 3px; }
   .prog-bar-fg { height: 6px; background: var(--green); border-radius: 3px; width: 0%; transition: width .3s; }
   .prog-msg { font-size: 13px; color: var(--text2); margin-top: 6px; }
-  .reset-btn {
+  
+  .button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .reset-btn, .pdf-btn {
     background: transparent;
     border: 0.5px solid var(--border2);
     border-radius: 8px;
@@ -125,8 +141,17 @@
     gap: 6px;
     min-height: 36px;
   }
-  .reset-btn:hover { background: rgba(255,255,255,0.06); color: var(--text2); }
-  .reset-btn:focus { outline: 2px solid var(--green); outline-offset: 2px; }
+  .reset-btn:hover, .pdf-btn:hover { background: rgba(255,255,255,0.06); color: var(--text2); }
+  .reset-btn:focus, .pdf-btn:focus { outline: 2px solid var(--green); outline-offset: 2px; }
+  .pdf-btn {
+    background: rgba(29,158,117,0.2);
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .pdf-btn:hover {
+    background: rgba(29,158,117,0.3);
+    color: var(--green);
+  }
 
   /* ── Grid ── */
   .grid {
@@ -249,11 +274,16 @@
   .page-footer a { color: var(--green); text-decoration: none; }
   .page-footer a:hover { text-decoration: underline; }
 
+  /* ── PDF Export ── */
+  #pdf-export {
+    display: none;
+  }
+
   /* ── Print ── */
   @media print {
     body { padding: 20px; background: #fff; color: #000; }
     .progress-card { display: none; }
-    .reset-btn { display: none; }
+    .reset-btn, .pdf-btn { display: none; }
     .item.done .item-label, 
     .item.done .item-hint { opacity: 0.6; }
     .cb { border-color: #000; }
@@ -264,6 +294,9 @@
   /* ── Responsive ── */
   @media (max-width: 600px) {
     .progress-card { flex-wrap: wrap; }
+    .progress-card { gap: 12px; }
+    .prog-section { min-width: 100%; }
+    .button-group { width: 100%; }
     .grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 420px) {
@@ -289,17 +322,24 @@
 </div>
 
 <div class="progress-card" role="region" aria-label="Progresso do inventário" aria-live="polite" aria-atomic="true">
-  <div class="prog-numbers">
-    <div class="prog-big" id="prog-n" aria-label="Ativos marcados">0</div>
-    <div class="prog-total">de 22 ativos</div>
+  <div class="prog-section">
+    <div class="prog-numbers">
+      <div class="prog-big" id="prog-n" aria-label="Ativos marcados">0</div>
+      <div class="prog-total">de 22 ativos</div>
+    </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar-bg"><div class="prog-bar-fg" id="prog-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do inventário"></div></div>
+      <div class="prog-msg" id="prog-msg">Comece marcando o que já tem documentado.</div>
+    </div>
   </div>
-  <div class="prog-bar-wrap">
-    <div class="prog-bar-bg"><div class="prog-bar-fg" id="prog-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do inventário"></div></div>
-    <div class="prog-msg" id="prog-msg">Comece marcando o que já tem documentado.</div>
+  <div class="button-group">
+    <button class="pdf-btn" onclick="generatePDF()" aria-label="Gerar relatório em PDF">
+      <i class="ti ti-file-pdf" aria-hidden="true"></i> Exportar PDF
+    </button>
+    <button class="reset-btn" onclick="resetAll()" aria-label="Limpar todas as respostas">
+      <i class="ti ti-refresh" aria-hidden="true"></i> Limpar tudo
+    </button>
   </div>
-  <button class="reset-btn" onclick="resetAll()" aria-label="Limpar todas as respostas">
-    <i class="ti ti-refresh" aria-hidden="true"></i> Limpar tudo
-  </button>
 </div>
 
 <div class="grid">
@@ -501,6 +541,31 @@
 
 </div>
 
+<!-- Container para PDF (oculto) -->
+<div id="pdf-export">
+  <div style="font-family: Arial, sans-serif; padding: 20px; color: #000;">
+    <h1 style="text-align: center; margin-bottom: 10px;">Inventário de Ativos do Empreendimento</h1>
+    <p style="text-align: center; color: #666; margin-bottom: 30px;">Relatório gerado em <span id="pdf-date"></span></p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <tr>
+        <td style="width: 48%; vertical-align: top; padding-right: 20px;">
+          <h2 style="background: #1D9E75; color: #fff; padding: 10px; margin-bottom: 15px; font-size: 16px;">✓ Ativos que você possui</h2>
+          <div id="pdf-done" style="font-size: 12px; line-height: 1.8;"></div>
+        </td>
+        <td style="width: 48%; vertical-align: top; padding-left: 20px; border-left: 1px solid #ddd;">
+          <h2 style="background: #ccc; color: #333; padding: 10px; margin-bottom: 15px; font-size: 16px;">○ Ativos que faltam</h2>
+          <div id="pdf-todo" style="font-size: 12px; line-height: 1.8;"></div>
+        </td>
+      </tr>
+    </table>
+    
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 11px;">
+      <p>Desenvolvido por <strong>Lara Guerreiro</strong> · Analista em Propriedade Industrial</p>
+    </div>
+  </div>
+</div>
+
 <footer class="page-footer">
   <p>Desenvolvido por <strong>Lara Guerreiro</strong> · Analista em Propriedade Industrial · InovaUEG / INPI</p>
   <p style="margin-top:6px">Material de apoio ao webinar <em>"Você sabe quais são os ativos do seu empreendimento?"</em> · 11 de junho de 2026</p>
@@ -562,9 +627,7 @@
         checked.push(idx);
       });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
-    } catch(e) {
-      // quota exceeded or private mode
-    }
+    } catch(e) {}
   }
 
   function loadFromStorage() {
@@ -579,13 +642,48 @@
           }
         });
       }
-    } catch(e) {
-      // corrupted data, ignore
-    }
+    } catch(e) {}
     update();
   }
 
-  // Attach click and keyboard handlers to all items
+  function generatePDF() {
+    const done = [];
+    const todo = [];
+    
+    document.querySelectorAll('.item').forEach((item) => {
+      const label = item.getAttribute('data-label');
+      if (item.classList.contains('done')) {
+        done.push(label);
+      } else {
+        todo.push(label);
+      }
+    });
+    
+    // Preencher o relatório
+    const doneHtml = done.length > 0 
+      ? done.map((l, i) => `<p style="margin: 8px 0;"><strong>${i+1}.</strong> ${l}</p>`).join('')
+      : '<p style="color: #999;">Nenhum ativo marcado ainda</p>';
+    
+    const todoHtml = todo.length > 0 
+      ? todo.map((l, i) => `<p style="margin: 8px 0;"><strong>${i+1}.</strong> ${l}</p>`).join('')
+      : '<p style="color: #999;">Todos os ativos foram marcados!</p>';
+    
+    document.getElementById('pdf-done').innerHTML = doneHtml;
+    document.getElementById('pdf-todo').innerHTML = todoHtml;
+    document.getElementById('pdf-date').textContent = new Date().toLocaleDateString('pt-BR');
+    
+    const element = document.getElementById('pdf-export');
+    const opt = {
+      margin: 10,
+      filename: 'inventario-ativos.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+    
+    html2pdf().set(opt).from(element).save();
+  }
+
   function initItems() {
     document.querySelectorAll('.item').forEach(item => {
       item.addEventListener('click', function(e) {
@@ -598,7 +696,6 @@
     });
   }
 
-  // Initialize on load
   window.addEventListener('load', function() {
     loadFromStorage();
     initItems();
