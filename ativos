@@ -1,1 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist — Inventário de Ativos do Empreendimento</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --bg: #0D1B2A;
+    --bg2: #112236;
+    --bg3: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #fff;
+    --text2: rgba(255,255,255,0.65);
+    --text3: rgba(255,255,255,0.35);
+    --green: #1D9E75;
+    --green-bg: rgba(29,158,117,0.12);
+    --green-border: rgba(29,158,117,0.3);
+  }
+
+  html, body {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    width: 100%;
+    max-width: 960px;
+    margin-bottom: 32px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .page-header p {
+    font-size: 14px;
+    color: var(--text3);
+  }
+  .page-header .author {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .author-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #1D3A5A;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500; color: #7FB3D3;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--text3);
+  }
+  .badge {
+    font-size: 10px; font-weight: 500;
+    padding: 2px 8px; border-radius: 10px;
+    display: inline-block;
+  }
+  .badge-inpi   { background: #EEEDFE; color: #3C3489; }
+  .badge-auto   { background: #E1F5EE; color: #085041; }
+  .badge-nda    { background: #FAEEDA; color: #633806; }
+
+  /* ── Progress ── */
+  .progress-card {
+    width: 100%;
+    max-width: 960px;
+    background: var(--bg2);
+    border: 0.5px solid var(--border2);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .prog-numbers { white-space: nowrap; }
+  .prog-big { font-size: 28px; font-weight: 500; color: var(--green); line-height: 1; }
+  .prog-total { font-size: 14px; color: var(--text3); }
+  .prog-bar-wrap { flex: 1; }
+  .prog-bar-bg { height: 6px; background: var(--border); border-radius: 3px; }
+  .prog-bar-fg { height: 6px; background: var(--green); border-radius: 3px; width: 0%; transition: width .3s; }
+  .prog-msg { font-size: 13px; color: var(--text2); margin-top: 6px; }
+  .reset-btn {
+    background: transparent;
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    padding: 7px 14px;
+    color: var(--text3);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+  }
+  .reset-btn:hover { background: rgba(255,255,255,0.06); color: var(--text2); }
+  .reset-btn:focus { outline: 2px solid var(--green); outline-offset: 2px; }
+
+  /* ── Grid ── */
+  .grid {
+    width: 100%;
+    max-width: 960px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+  }
+
+  .col-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 14px 10px;
+  }
+
+  .col-title {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .col-title i { font-size: 13px; }
+
+  .items-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 8px;
+    min-height: 44px;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, box-shadow .15s;
+    user-select: none;
+  }
+  .item:last-child { margin-bottom: 0; }
+  .item:hover { background: rgba(255,255,255,0.07); }
+  .item:focus-within { box-shadow: 0 0 0 2px rgba(29,158,117,0.4); }
+  .item.done {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+  }
+
+  .cb {
+    width: 18px; height: 18px; flex-shrink: 0;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, border-color .15s, transform .15s;
+    cursor: pointer;
+  }
+  .cb:active { transform: scale(0.95); }
+  .cb.checked { 
+    background: var(--green); 
+    border-color: var(--green);
+    animation: checkPop .3s ease;
+  }
+  .cb.checked::after {
+    content: '';
+    display: block;
+    width: 4px; height: 7px;
+    border: 1.5px solid #fff;
+    border-top: none; border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+  }
+
+  @keyframes checkPop {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  .item-text { flex: 1; min-width: 0; }
+  .item-label {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.35;
+    display: block;
+  }
+  .item-hint {
+    font-size: 11px;
+    color: var(--text3);
+    display: block;
+    margin-top: 2px;
+  }
+  .item.done .item-label { color: var(--text3); text-decoration: line-through; }
+  .item.done .item-hint  { color: rgba(255,255,255,0.2); text-decoration: line-through; }
+
+  .tag {
+    display: inline-block;
+    font-size: 9px; font-weight: 500;
+    padding: 1px 5px; border-radius: 6px;
+    margin-left: 4px; vertical-align: middle;
+  }
+
+  /* ── Footer ── */
+  .page-footer {
+    width: 100%; max-width: 960px;
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text3);
+    border-top: 0.5px solid var(--border);
+    padding-top: 20px;
+  }
+  .page-footer a { color: var(--green); text-decoration: none; }
+  .page-footer a:hover { text-decoration: underline; }
+
+  /* ── Print ── */
+  @media print {
+    body { padding: 20px; background: #fff; color: #000; }
+    .progress-card { display: none; }
+    .reset-btn { display: none; }
+    .item.done .item-label, 
+    .item.done .item-hint { opacity: 0.6; }
+    .cb { border-color: #000; }
+    .cb.checked { background: #000; }
+    .col-card { break-inside: avoid; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .progress-card { flex-wrap: wrap; }
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 420px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Inventário de ativos do meu empreendimento</h1>
+  <p>Marque o que já tem identificado e documentado — leve este checklist para a próxima negociação.</p>
+  <div class="author">
+    <div class="author-dot">LG</div>
+    <span>Por <strong style="color:rgba(255,255,255,0.6)">Lara Guerreiro</strong> · Analista em Propriedade Industrial · Especialista em Inovação</span>
+  </div>
+</header>
+
+<div class="legend" role="list" aria-label="Legenda de categorias">
+  <div class="legend-item" role="listitem"><span class="badge badge-inpi">INPI</span> requer registo no INPI</div>
+  <div class="legend-item" role="listitem"><span class="badge badge-auto">automático</span> proteção automática ao criar</div>
+  <div class="legend-item" role="listitem"><span class="badge badge-nda">NDA</span> proteger por contrato / sigilo</div>
+</div>
+
+<div class="progress-card" role="region" aria-label="Progresso do inventário" aria-live="polite" aria-atomic="true">
+  <div class="prog-numbers">
+    <div class="prog-big" id="prog-n" aria-label="Ativos marcados">0</div>
+    <div class="prog-total">de 22 ativos</div>
+  </div>
+  <div class="prog-bar-wrap">
+    <div class="prog-bar-bg"><div class="prog-bar-fg" id="prog-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do inventário"></div></div>
+    <div class="prog-msg" id="prog-msg">Comece marcando o que já tem documentado.</div>
+  </div>
+  <button class="reset-btn" onclick="resetAll()" aria-label="Limpar todas as respostas">
+    <i class="ti ti-refresh" aria-hidden="true"></i> Limpar tudo
+  </button>
+</div>
+
+<div class="grid">
+
+  <!-- Tangíveis -->
+  <section class="col-card">
+    <h2 class="col-title"><i class="ti ti-building" aria-hidden="true"></i> Ativos tangíveis</h2>
+    <div class="items-group" role="group" aria-labelledby="section-tangivel">
+      <div id="section-tangivel" style="display:none">Ativos tangíveis</div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Imóveis e instalações">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Imóveis e instalações</span>
+          <span class="item-hint">Sede, galpões, lojas, terrenos</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Equipamentos e máquinas">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Equipamentos e máquinas</span>
+          <span class="item-hint">Linha de produção, veículos, ferramentas</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Estoques">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Estoques</span>
+          <span class="item-hint">Mercadorias, matérias-primas</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Capital e caixa">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Capital e caixa</span>
+          <span class="item-hint">Dinheiro, aplicações, recebíveis</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Ativos financeiros">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Ativos financeiros</span>
+          <span class="item-hint">Investimentos, participações societárias</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PI Registável -->
+  <section class="col-card">
+    <h2 class="col-title"><i class="ti ti-certificate" aria-hidden="true"></i> PI registável</h2>
+    <div class="items-group" role="group" aria-labelledby="section-pi">
+      <div id="section-pi" style="display:none">PI registável</div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Marca">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Marca <span class="tag badge-inpi">INPI</span></span>
+          <span class="item-hint">Nome, logotipo, slogan — 10 anos prorrogáveis</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Patente">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Patente <span class="tag badge-inpi">INPI</span></span>
+          <span class="item-hint">Invenção, processo industrial — até 20 anos</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Desenho industrial">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Desenho industrial <span class="tag badge-inpi">INPI</span></span>
+          <span class="item-hint">Forma ornamental do produto ou embalagem — até 25 anos</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Circuito integrado">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Circuito integrado <span class="tag badge-inpi">INPI</span></span>
+          <span class="item-hint">Topografia original — 10 anos</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Criações autorais -->
+  <section class="col-card">
+    <h2 class="col-title"><i class="ti ti-code" aria-hidden="true"></i> Criações autorais</h2>
+    <div class="items-group" role="group" aria-labelledby="section-autoral">
+      <div id="section-autoral" style="display:none">Criações autorais</div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Software e aplicativos">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Software e aplicativos <span class="tag badge-auto">automático</span></span>
+          <span class="item-hint">Código-fonte, plataformas digitais — 50 anos</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Conteúdos e obras">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Conteúdos e obras <span class="tag badge-auto">automático</span></span>
+          <span class="item-hint">Textos, vídeos, fotos, materiais de formação</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Know-how -->
+  <section class="col-card">
+    <h2 class="col-title"><i class="ti ti-lock" aria-hidden="true"></i> Know-how e segredos</h2>
+    <div class="items-group" role="group" aria-labelledby="section-knowhow">
+      <div id="section-knowhow" style="display:none">Know-how e segredos</div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Fórmulas ou receitas próprias">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Fórmulas ou receitas próprias <span class="tag badge-nda">NDA</span></span>
+          <span class="item-hint">Composições exclusivas protegidas por sigilo</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Metodologias internas">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Metodologias internas <span class="tag badge-nda">NDA</span></span>
+          <span class="item-hint">Modos de fazer que concorrentes não replicam facilmente</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Fornecedores estratégicos">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Fornecedores estratégicos <span class="tag badge-nda">NDA</span></span>
+          <span class="item-hint">Contactos exclusivos, condições negociadas</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dados e clientes -->
+  <section class="col-card">
+    <h2 class="col-title"><i class="ti ti-users" aria-hidden="true"></i> Dados e clientes</h2>
+    <div class="items-group" role="group" aria-labelledby="section-dados">
+      <div id="section-dados" style="display:none">Dados e clientes</div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Base de clientes organizada">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Base de clientes organizada</span>
+          <span class="item-hint">Cadastros, histórico de compras, preferências</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Contratos com clientes ativos">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Contratos com clientes ativos</span>
+          <span class="item-hint">Acordos de fornecimento, fidelização, exclusividade</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Dados de desempenho">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Dados de desempenho</span>
+          <span class="item-hint">Métricas, relatórios, análises proprietárias</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reputação -->
+  <section class="col-card">
+    <h2 class="col-title"><i class="ti ti-star" aria-hidden="true"></i> Reputação e relações</h2>
+    <div class="items-group" role="group" aria-labelledby="section-reputacao">
+      <div id="section-reputacao" style="display:none">Reputação e relações</div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Posicionamento de marca">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Posicionamento de marca</span>
+          <span class="item-hint">Avaliações, prémios, presença de mercado documentada</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Parcerias estratégicas">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Parcerias estratégicas <span class="tag badge-nda">NDA</span></span>
+          <span class="item-hint">Distribuição exclusiva, acordos de longo prazo</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Equipe-chave">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Equipe-chave <span class="tag badge-nda">NDA</span></span>
+          <span class="item-hint">Talentos críticos, cláusulas de não-concorrência</span>
+        </div>
+      </div>
+      <div class="item" role="checkbox" aria-checked="false" tabindex="0" data-label="Reputação documentada">
+        <div class="cb" aria-hidden="true"></div>
+        <div class="item-text">
+          <span class="item-label">Reputação documentada</span>
+          <span class="item-hint">Certificações, referências, histórico público</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="page-footer">
+  <p>Desenvolvido por <strong>Lara Guerreiro</strong> · Analista em Propriedade Industrial · InovaUEG / INPI</p>
+  <p style="margin-top:6px">Material de apoio ao webinar <em>"Você sabe quais são os ativos do seu empreendimento?"</em> · 11 de junho de 2026</p>
+</footer>
+
+<script>
+  const TOTAL = 22;
+  const STORAGE_KEY = 'ativos-checklist';
+  const MSGS = [
+    [0,  4,  "Comece marcando o que já tem documentado."],
+    [5,  9,  "Bom começo — continue identificando seus ativos."],
+    [10, 14, "Metade do caminho. Há ativos ocultos a descobrir."],
+    [15, 19, "Inventário robusto. Falta pouco para o quadro completo."],
+    [20, 22, "Inventário completo. Seu negócio está mapeado."]
+  ];
+
+  function count() {
+    return document.querySelectorAll('.cb.checked').length;
+  }
+
+  function update() {
+    const n = count();
+    const pct = Math.round(n / TOTAL * 100);
+    document.getElementById('prog-n').textContent = n;
+    document.getElementById('prog-n').setAttribute('aria-label', `${n} ativos marcados`);
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-bar').setAttribute('aria-valuenow', pct);
+    const m = MSGS.find(r => n >= r[0] && n <= r[1]);
+    if (m) document.getElementById('prog-msg').textContent = m[2];
+    saveToStorage();
+  }
+
+  function tog(el, e) {
+    if (e && e.type === 'keydown') {
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      e.preventDefault();
+    }
+    el.querySelector('.cb').classList.toggle('checked');
+    el.classList.toggle('done');
+    const isChecked = el.classList.contains('done');
+    el.setAttribute('aria-checked', isChecked);
+    update();
+  }
+
+  function resetAll() {
+    if (count() === 0) return;
+    document.querySelectorAll('.cb').forEach(cb => cb.classList.remove('checked'));
+    document.querySelectorAll('.item').forEach(i => {
+      i.classList.remove('done');
+      i.setAttribute('aria-checked', 'false');
+    });
+    update();
+  }
+
+  function saveToStorage() {
+    try {
+      const checked = [];
+      document.querySelectorAll('.item.done').forEach((item, idx) => {
+        checked.push(idx);
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
+    } catch(e) {
+      // quota exceeded or private mode
+    }
+  }
+
+  function loadFromStorage() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && Array.isArray(saved)) {
+        document.querySelectorAll('.item').forEach((item, idx) => {
+          if (saved.includes(idx)) {
+            item.classList.add('done');
+            item.querySelector('.cb').classList.add('checked');
+            item.setAttribute('aria-checked', 'true');
+          }
+        });
+      }
+    } catch(e) {
+      // corrupted data, ignore
+    }
+    update();
+  }
+
+  // Attach click and keyboard handlers to all items
+  function initItems() {
+    document.querySelectorAll('.item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        tog(this, e);
+      });
+      
+      item.addEventListener('keydown', function(e) {
+        tog(this, e);
+      });
+    });
+  }
+
+  // Initialize on load
+  window.addEventListener('load', function() {
+    loadFromStorage();
+    initItems();
+  });
+</script>
+
+</body>
+</html>
